@@ -7,8 +7,11 @@ import (
 )
 
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	pathTmpl := "../../templates/" + tmpl
-	parsedTmpl, err := template.ParseFiles(pathTmpl)
+	basePath := "../../templates/"
+	pathTmpl := basePath + tmpl
+	pathBaseTmpl := basePath + "base.tmpl"
+
+	parsedTmpl, err := template.ParseFiles(pathTmpl, pathBaseTmpl)
 	if err != nil {
 		slog.Error("Unable to find template: %s: %v", pathTmpl, err)
 		return
