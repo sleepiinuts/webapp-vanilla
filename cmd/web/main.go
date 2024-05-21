@@ -1,18 +1,38 @@
 package main
 
 import (
-	"log"
+	"html/template"
+	"log/slog"
 	"net/http"
+	"os"
 
+	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/pkg/handlers"
+	"github.com/sleepiinuts/webapp-plain/pkg/renders"
 )
 
 const port = ":8080"
 
-func main() {
-	http.HandleFunc("/", handlers.Home)
-	http.HandleFunc("/about", handlers.About)
+var (
+	ap *configs.AppProperties
+	r  *renders.Renderer
+	h  *handlers.Handler
+)
 
-	log.Printf("Starting on port %s\n", port)
+func main() {
+	http.HandleFunc("/", h.Home)
+	http.HandleFunc("/about", h.About)
+
+	ap.Logger.Info("Starting application", "port", port)
 	http.ListenAndServe(port, nil)
+}
+
+func init() {
+	ap = configs.New(
+		make(map[string]*template.Template),
+		true,
+		slog.New(slog.NewTextHandler(os.Stdout, nil)))
+
+	r = renders.New(ap)
+	h = handlers.New(r)
 }
