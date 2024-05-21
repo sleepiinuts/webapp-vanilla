@@ -1,4 +1,4 @@
-package main
+package renders
 
 import (
 	"html/template"
@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-func renderTemplate(w http.ResponseWriter, tmpl string) {
-	pathTmpl := "./templates/" + tmpl
+func RenderTemplate(w http.ResponseWriter, tmpl string) {
+	pathTmpl := "../../templates/" + tmpl
 	parsedTmpl, err := template.ParseFiles(pathTmpl)
 	if err != nil {
 		slog.Error("Unable to find template: %s: %v", pathTmpl, err)
