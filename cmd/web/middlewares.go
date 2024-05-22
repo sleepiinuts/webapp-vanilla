@@ -10,10 +10,10 @@ func csrfHandler(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 
 	csrfHandler.SetBaseCookie(http.Cookie{
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   false,
-		SameSite: http.SameSiteLaxMode,
+		Path:     ap.Cookies.Path,
+		HttpOnly: ap.Cookies.HttpOnly,
+		Secure:   ap.Cookies.Secure,
+		SameSite: ap.Cookies.SameSite,
 	})
 
 	return csrfHandler

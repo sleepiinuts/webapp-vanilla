@@ -27,5 +27,12 @@
     </div>
   </div>
   <p>Template Data: {{.Flash}}</p>
+  <p>
+    <!-- {{if ne (index .Data "ip") ""}} -->
+    Your ip address is {{index .Data "ip"}}
+    <!-- {{else}} -->
+    I dont know your ip address. Please visit <a href="/">Home Page</a>...
+    <!-- {{ end }} -->
+  </p>
 </div>
 {{ end }}
