@@ -20,11 +20,11 @@ var (
 )
 
 func main() {
-	http.HandleFunc("/", h.Home)
-	http.HandleFunc("/about", h.About)
+	// http.HandleFunc("/", h.Home)
+	// http.HandleFunc("/about", h.About)
 
 	ap.Logger.Info("Starting application", "port", port)
-	http.ListenAndServe(port, nil)
+	http.ListenAndServe(port, routes())
 }
 
 func init() {
