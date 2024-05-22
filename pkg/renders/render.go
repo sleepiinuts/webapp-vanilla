@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/sleepiinuts/webapp-plain/configs"
+	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
 
 const basePath = "../../templates/"
@@ -38,11 +39,11 @@ func (r *Renderer) RenderTemplate(w http.ResponseWriter, tmpl string) {
 	}
 }
 
-func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, tmpl string) {
+func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, tmpl string, td *models.Template) {
 	tPath := basePath + tmpl
 
 	// cache template
-	if _, ok := r.ap.Tc[tmpl]; !ok {
+	if _, ok := r.ap.Tc[tmpl]; !ok || !r.ap.UseCache {
 
 		// initial template
 		page, err := template.New(tmpl).ParseFiles(basePath + tmpl)
@@ -74,7 +75,7 @@ func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, tmpl string) {
 		r.ap.Tc[tmpl] = parsedTmpl
 	}
 
-	err := r.ap.Tc[tmpl].Execute(w, nil)
+	err := r.ap.Tc[tmpl].Execute(w, td)
 	if err != nil {
 		r.ap.Logger.Error("unable to render template: ", "templateName", tmpl, "error", err)
 	}

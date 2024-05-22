@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/renders"
 )
 
@@ -15,9 +16,9 @@ func New(r *renders.Renderer) *Handler {
 }
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
-	h.r.RenderTemplateFromMap(w, "home.tmpl")
+	h.r.RenderTemplateFromMap(w, "home.tmpl", &models.Template{})
 }
 
 func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
-	h.r.RenderTemplateFromMap(w, "about.tmpl")
+	h.r.RenderTemplateFromMap(w, "about.tmpl", &models.Template{Flash: "Greeting!!"})
 }
