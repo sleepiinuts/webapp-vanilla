@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
-	"github.com/sleepiinuts/webapp-plain/pkg/renders"
 )
 
 type Handler struct {

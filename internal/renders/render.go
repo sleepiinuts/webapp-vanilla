@@ -9,7 +9,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
 
-const basePath = "../../templates/"
+const basePath = "../web/templates/"
 const btPath = basePath + "base.tmpl"
 
 // var tc = make(map[string]*template.Template)

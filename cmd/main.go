@@ -8,9 +8,10 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/sleepiinuts/webapp-plain/api/handlers"
+	"github.com/sleepiinuts/webapp-plain/api/routes"
 	"github.com/sleepiinuts/webapp-plain/configs"
-	"github.com/sleepiinuts/webapp-plain/pkg/handlers"
-	"github.com/sleepiinuts/webapp-plain/pkg/renders"
+	"github.com/sleepiinuts/webapp-plain/internal/renders"
 )
 
 const port = ":8080"
@@ -27,7 +28,7 @@ func main() {
 	// http.HandleFunc("/about", h.About)
 
 	ap.Logger.Info("Starting application", "port", port)
-	http.ListenAndServe(port, sm.LoadAndSave(routes()))
+	http.ListenAndServe(port, sm.LoadAndSave(routes.Routes(h, ap)))
 }
 
 func init() {
