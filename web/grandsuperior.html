@@ -19,6 +19,7 @@
         font-size: 80%;
       }
     </style>
+    <link rel="stylesheet" href="static/css/modal.css" />
     <title>Wonderland</title>
   </head>
   <body>
@@ -131,9 +132,23 @@
 
       <div class="row">
         <div class="col text-center">
-          <a href="make-reservation.html" class="btn btn-success"
-            >See Availability</a
-          >
+          <button id="seeAvailBtn" class="btn btn-success">
+            See Availability
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- working sheet z-index=1 -->
+    <div id="calendarModal" class="modal">
+      <!-- modal content -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Please input your booking period</h2>
+          <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+          <input id="datepicker" />
         </div>
       </div>
     </div>
@@ -154,5 +169,11 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
+
+    <script src="static/js/modal.js"></script>
+
+    <!-- datepicker -->
+    <script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
+    <script src="static/js/datepicker.js"></script>
   </body>
 </html>
