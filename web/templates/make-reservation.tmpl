@@ -1,0 +1,50 @@
+{{template "base" .}}
+
+{{define "content"}}
+
+<div class="container">
+  <div class="row mt-5">
+    <h1 class="text-center">Make Reservation</h1>
+
+    <form action="reservation.html" method="POST">
+      <label for="firstName" class="form-label">Firstname:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="firstName"
+        name="firstName"
+        required
+      />
+
+      <label for="lastName" class="form-label">Lastname:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="lastName"
+        name="lastName"
+        required
+      />
+
+      <label for="email" class="form-label">Email:</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        required
+      />
+
+      <label for="phoneNumber" class="form-label">Phone Number:</label>
+      <input
+        type="tel"
+        class="form-control"
+        id="phoneNumber"
+        name="phoneNumber"
+        required
+      />
+      <hr />
+      <button type="submit" class="btn btn-primary">See Availability</button>
+    </form>
+  </div>
+</div>
+{{ end }}

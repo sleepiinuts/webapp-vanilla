@@ -18,19 +18,36 @@ func New(r *renders.Renderer, sm *scs.SessionManager) *Handler {
 }
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
-	// working with scs session
-	h.sm.Put(r.Context(), "ip", r.RemoteAddr)
 
 	h.r.RenderTemplateFromMap(w, "home.tmpl", &models.Template{})
 }
 
 func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
-	// get session-message
-	ip := h.sm.GetString(r.Context(), "ip")
 
 	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, "about.tmpl", &models.Template{
-		Data:  map[string]any{"ip": ip},
-		Flash: "Greeting!!",
-	})
+	h.r.RenderTemplateFromMap(w, "about.tmpl", &models.Template{})
+}
+
+func (h *Handler) Contact(w http.ResponseWriter, r *http.Request) {
+
+	// parse session-message to template data
+	h.r.RenderTemplateFromMap(w, "contact.tmpl", &models.Template{})
+}
+
+func (h *Handler) GradeSuperior(w http.ResponseWriter, r *http.Request) {
+
+	// parse session-message to template data
+	h.r.RenderTemplateFromMap(w, "grandsuperior.tmpl", &models.Template{})
+}
+
+func (h *Handler) DeluxeRoom(w http.ResponseWriter, r *http.Request) {
+
+	// parse session-message to template data
+	h.r.RenderTemplateFromMap(w, "deluxeroom.tmpl", &models.Template{})
+}
+
+func (h *Handler) MakeReservation(w http.ResponseWriter, r *http.Request) {
+
+	// parse session-message to template data
+	h.r.RenderTemplateFromMap(w, "make-reservation.tmpl", &models.Template{})
 }

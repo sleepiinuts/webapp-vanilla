@@ -34,7 +34,7 @@ func main() {
 func init() {
 	ap = configs.New(
 		make(map[string]*template.Template),
-		true,
+		false,
 		slog.New(slog.NewTextHandler(os.Stdout, nil)))
 
 	// config session manager
