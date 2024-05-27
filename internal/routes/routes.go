@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/sleepiinuts/webapp-plain/api/handlers"
-	"github.com/sleepiinuts/webapp-plain/api/middlewares"
 	"github.com/sleepiinuts/webapp-plain/configs"
+	"github.com/sleepiinuts/webapp-plain/internal/handlers"
+	"github.com/sleepiinuts/webapp-plain/internal/middlewares"
 )
 
 func Routes(h *handlers.Handler, ap *configs.AppProperties) http.Handler {

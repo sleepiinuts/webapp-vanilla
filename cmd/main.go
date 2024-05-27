@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/sleepiinuts/webapp-plain/api/handlers"
-	"github.com/sleepiinuts/webapp-plain/api/routes"
 	"github.com/sleepiinuts/webapp-plain/configs"
+	"github.com/sleepiinuts/webapp-plain/internal/handlers"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
+	"github.com/sleepiinuts/webapp-plain/internal/routes"
 )
 
 const port = ":8080"
