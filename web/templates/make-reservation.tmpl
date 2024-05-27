@@ -6,7 +6,8 @@
   <div class="row mt-5">
     <h1 class="text-center">Make Reservation</h1>
 
-    <form action="reservation.html" method="POST">
+    <form action="/make-reservation" method="post">
+      <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
       <label for="firstName" class="form-label">Firstname:</label>
       <input
         type="text"

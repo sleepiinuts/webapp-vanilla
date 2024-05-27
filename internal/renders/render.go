@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/justinas/nosurf"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
@@ -39,8 +40,12 @@ func (r *Renderer) RenderTemplate(w http.ResponseWriter, tmpl string) {
 	}
 }
 
-func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, tmpl string, td *models.Template) {
+func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, rq *http.Request, tmpl string, td *models.Template) {
 	tPath := basePath + tmpl
+
+	// set default template data
+	td.CSRFToken = nosurf.Token(rq)
+	// r.ap.Logger.Info("CSRF Token", "token", td.CSRFToken)
 
 	// cache template
 	if _, ok := r.ap.Tc[tmpl]; !ok || !r.ap.UseCache {

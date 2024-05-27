@@ -30,19 +30,19 @@ func New(r *renders.Renderer, sm *scs.SessionManager) *Handler {
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 
-	h.r.RenderTemplateFromMap(w, "home.tmpl", &models.Template{})
+	h.r.RenderTemplateFromMap(w, r, "home.tmpl", &models.Template{})
 }
 
 func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
 
 	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, "about.tmpl", &models.Template{})
+	h.r.RenderTemplateFromMap(w, r, "about.tmpl", &models.Template{})
 }
 
 func (h *Handler) Contact(w http.ResponseWriter, r *http.Request) {
 
 	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, "contact.tmpl", &models.Template{})
+	h.r.RenderTemplateFromMap(w, r, "contact.tmpl", &models.Template{})
 }
 
 func (h *Handler) Rooms(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +58,7 @@ func (h *Handler) Rooms(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, "rooms.tmpl", &models.Template{
+	h.r.RenderTemplateFromMap(w, r, "rooms.tmpl", &models.Template{
 		Data: map[string]any{
 			"name": rooms[id].name,
 			"img":  rooms[id].img,
@@ -68,5 +68,10 @@ func (h *Handler) Rooms(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) MakeReservation(w http.ResponseWriter, r *http.Request) {
 
 	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, "make-reservation.tmpl", &models.Template{})
+	h.r.RenderTemplateFromMap(w, r, "make-reservation.tmpl", &models.Template{})
+}
+
+func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
+	// parse session-message to template data
+	h.r.RenderTemplateFromMap(w, r, "make-reservation.tmpl", &models.Template{})
 }
