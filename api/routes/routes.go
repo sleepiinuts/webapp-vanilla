@@ -20,8 +20,7 @@ func Routes(h *handlers.Handler, ap *configs.AppProperties) http.Handler {
 	mux.Get("/", h.Home)
 	mux.Get("/about", h.About)
 	mux.Get("/contact", h.Contact)
-	mux.Get("/grandsuperior", h.GradeSuperior)
-	mux.Get("/deluxeroom", h.DeluxeRoom)
+	mux.Get("/rooms", h.Rooms)
 	mux.Get("/make-reservation", h.MakeReservation)
 
 	// set up static file FileSystem relative to main.go

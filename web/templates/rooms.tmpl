@@ -8,16 +8,13 @@
 <div class="container">
   <div class="row d-flex justify-content-center">
     <div class="col-6">
-      <img
-        src="../static/images/deluxeroom.png"
-        alt="deluxe room picture"
-        class="img-fluid img-thumbnail"
-      />
+      <img src={{index .Data "img"}}
+      alt="grand superior room picture" class="img-fluid img-thumbnail" />
     </div>
   </div>
 
   <div class="row mt-5">
-    <h1 class="text-center">Deluxe Room</h1>
+    <h1 class="text-center">{{index .Data "name"}}</h1>
     <p>
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae
       laudantium quia ullam expedita aspernatur, aperiam, nam nihil quibusdam,

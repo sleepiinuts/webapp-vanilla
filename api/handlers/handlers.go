@@ -2,11 +2,22 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
+
+type RoomsInfo struct {
+	name string
+	img  string
+}
+
+var rooms = map[int]RoomsInfo{
+	1: {name: "Grand Superior", img: "../static/images/grandsuperior.png"},
+	2: {name: "Deluxe Room", img: "../static/images/deluxeroom.png"},
+}
 
 type Handler struct {
 	r  *renders.Renderer
@@ -34,16 +45,24 @@ func (h *Handler) Contact(w http.ResponseWriter, r *http.Request) {
 	h.r.RenderTemplateFromMap(w, "contact.tmpl", &models.Template{})
 }
 
-func (h *Handler) GradeSuperior(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Rooms(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if _, ok := rooms[id]; !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 
 	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, "grandsuperior.tmpl", &models.Template{})
-}
-
-func (h *Handler) DeluxeRoom(w http.ResponseWriter, r *http.Request) {
-
-	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, "deluxeroom.tmpl", &models.Template{})
+	h.r.RenderTemplateFromMap(w, "rooms.tmpl", &models.Template{
+		Data: map[string]any{
+			"name": rooms[id].name,
+			"img":  rooms[id].img,
+		}})
 }
 
 func (h *Handler) MakeReservation(w http.ResponseWriter, r *http.Request) {
