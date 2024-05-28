@@ -52,16 +52,22 @@
       <span class="close">&times;</span>
     </div>
     <div class="modal-body">
-      <input id="datepicker" />
+      <form action="/check-room-avail" method="post">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
+        <input id="datepicker" name="datepicker" class="form-control" />
+        <button id="submitDateRange" class="btn btn-success">
+          &#x2714; abc
+        </button>
+      </form>
     </div>
   </div>
 </div>
+
 {{ end }}
 
 {{define "js"}}
-<script src="../static/js/modal.js"></script>
-
-<!-- datepicker -->
 <script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
 <script src="../static/js/datepicker.js"></script>
+<script src="../static/js/modal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
 {{ end }}

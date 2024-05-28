@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -30,7 +31,7 @@ func New(r *renders.Renderer, sm *scs.SessionManager) *Handler {
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
 
-	h.r.RenderTemplateFromMap(w, r, "home.tmpl", &models.Template{})
+	h.r.RenderTemplateFromMap(w, r, "index.tmpl", &models.Template{})
 }
 
 func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
@@ -74,4 +75,12 @@ func (h *Handler) MakeReservation(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 	// parse session-message to template data
 	h.r.RenderTemplateFromMap(w, r, "make-reservation.tmpl", &models.Template{})
+}
+
+func (h *Handler) CheckRoomAvail(w http.ResponseWriter, r *http.Request) {
+	// parse session-message to template data
+	// w.Write([]byte("datepicker: " + r.URL.Query().Get("datepicker")))
+	fmt.Printf("here:%s\n", r.URL.Query().Get("datepicker"))
+
+	h.r.RenderTemplateFromMap(w, r, "index.tmpl", &models.Template{})
 }

@@ -23,3 +23,6 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 };
+
+// why console.log doesnt work with go template??
+console.log("please print me: inside modal");
