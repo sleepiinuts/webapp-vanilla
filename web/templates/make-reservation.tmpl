@@ -14,6 +14,10 @@
       }}{{ end }}" id="firstName" name="firstName" value="{{if .Form
 
 
+
+
+
+
       }}{{index (index .Form "firstName") 0}}{{ end }}" required />
 
       {{if .FormErrors }}{{if (index .FormErrors "firstName")}}
@@ -24,9 +28,6 @@
       <input type="text" class="form-control
       {{if .FormErrors}}{{if (index .FormErrors "lastName")}}is-invalid{{ end
       }}{{ end }}" id="lastName" name="lastName" value="{{if .Form
-
-
-
       }}{{index (index .Form "lastName") 0}}{{ end }}" required />
 
       {{if .FormErrors }}{{if (index .FormErrors "lastName")}}
@@ -34,9 +35,13 @@
       {{ end }}{{ end }}
 
       <label for="email" class="form-label">Email:</label>
-      <input type="email" class="form-control {{if .FormErrors
-      }}{{if (index .FormErrors "lastName")}}is-invalid{{ end }}{{ end }}"
-      id="email" name="email" required /> {{if .FormErrors
+      <input type="email" class="form-control
+      {{if .FormErrors}}{{if (index .FormErrors "email")}}is-invalid{{ end
+      }}{{ end }}" id="email" name="email" value="{{if .Form
+
+      }}{{index (index .Form "email") 0}}{{ end }}" />
+      {{if .FormErrors
+
       }}{{if (index .FormErrors "email")}}
       <div class="invalid-feedback">{{index .FormErrors "email"}}</div>
       {{ end }}{{ end }}

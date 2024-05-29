@@ -1,7 +1,13 @@
 package forms
 
 import (
+	"net/mail"
 	"net/url"
+)
+
+const (
+	InvalidRequired    = "This field is required"
+	InValidEmailFormat = "Wrong Format Email"
 )
 
 type Form struct {
@@ -26,7 +32,15 @@ func (f *Form) AddError(field, errMsg string) {
 func (f *Form) Require(fields ...string) {
 	for _, field := range fields {
 		if !f.data.Has(field) || f.data.Get(field) == "" {
-			f.AddError(field, "This field is required")
+			f.AddError(field, InvalidRequired)
+		}
+	}
+}
+
+func (f *Form) IsValidEmail(fields ...string) {
+	for _, field := range fields {
+		if _, err := mail.ParseAddress(f.data.Get(field)); err != nil {
+			f.AddError(field, InValidEmailFormat)
 		}
 	}
 }

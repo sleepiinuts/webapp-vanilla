@@ -98,6 +98,7 @@ func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 	form.Require("firstName", "lastName", "email")
+	form.IsValidEmail("email")
 
 	// parse session-message to template data
 	if !form.IsValid() {
