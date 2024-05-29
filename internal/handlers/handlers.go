@@ -92,7 +92,7 @@ func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 	h.r.RenderTemplateFromMap(w, r, "make-reservation.tmpl", &models.Template{})
 }
 
-func (h *Handler) CheckRoomAvail(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 	// parse session-message to template data
 	// w.Write([]byte("datepicker: " + r.URL.Query().Get("datepicker")))
 
