@@ -1,6 +1,8 @@
 package forms
 
-import "net/url"
+import (
+	"net/url"
+)
 
 type Form struct {
 	data   url.Values
@@ -27,4 +29,8 @@ func (f *Form) Require(fields ...string) {
 			f.AddError(field, "This field is required")
 		}
 	}
+}
+
+func (f *Form) GetErrors() map[string][]string {
+	return f.errors
 }

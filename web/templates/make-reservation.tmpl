@@ -6,34 +6,40 @@
   <div class="row mt-5">
     <h1 class="text-center">Make Reservation</h1>
 
-    <form action="/make-reservation" method="post">
+    <form action="/make-reservation" method="post" novalidate>
       <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
       <label for="firstName" class="form-label">Firstname:</label>
-      <input
-        type="text"
-        class="form-control"
-        id="firstName"
-        name="firstName"
-        required
-      />
+      <input type="text" class="form-control
+      {{if .FormErrors}}{{if (index .FormErrors "firstName")}}is-invalid{{ end
+      }}{{ end }}" id="firstName" name="firstName" value="{{if .Form
+
+
+      }}{{index (index .Form "firstName") 0}}{{ end }}" required />
+
+      {{if .FormErrors }}{{if (index .FormErrors "firstName")}}
+      <div class="invalid-feedback">{{index .FormErrors "firstName"}}</div>
+      {{ end }}{{ end }}
 
       <label for="lastName" class="form-label">Lastname:</label>
-      <input
-        type="text"
-        class="form-control"
-        id="lastName"
-        name="lastName"
-        required
-      />
+      <input type="text" class="form-control
+      {{if .FormErrors}}{{if (index .FormErrors "lastName")}}is-invalid{{ end
+      }}{{ end }}" id="lastName" name="lastName" value="{{if .Form
+
+
+
+      }}{{index (index .Form "lastName") 0}}{{ end }}" required />
+
+      {{if .FormErrors }}{{if (index .FormErrors "lastName")}}
+      <div class="invalid-feedback">{{index .FormErrors "lastName"}}</div>
+      {{ end }}{{ end }}
 
       <label for="email" class="form-label">Email:</label>
-      <input
-        type="email"
-        class="form-control"
-        id="email"
-        name="email"
-        required
-      />
+      <input type="email" class="form-control {{if .FormErrors
+      }}{{if (index .FormErrors "lastName")}}is-invalid{{ end }}{{ end }}"
+      id="email" name="email" required /> {{if .FormErrors
+      }}{{if (index .FormErrors "email")}}
+      <div class="invalid-feedback">{{index .FormErrors "email"}}</div>
+      {{ end }}{{ end }}
 
       <label for="phoneNumber" class="form-label">Phone Number:</label>
       <input

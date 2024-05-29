@@ -88,8 +88,29 @@ func (h *Handler) MakeReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
+	// populate r.Form
+	err := r.ParseForm()
+	if err != nil {
+		h.ap.Logger.Error("Invalid Form", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Require("firstName", "lastName", "email")
+
 	// parse session-message to template data
-	h.r.RenderTemplateFromMap(w, r, "make-reservation.tmpl", &models.Template{})
+	if !form.IsValid() {
+		w.WriteHeader(http.StatusForbidden)
+		h.r.RenderTemplateFromMap(w, r, "make-reservation.tmpl",
+			&models.Template{
+				Form: r.PostForm, FormErrors: form.GetErrors(),
+			})
+		return
+	}
+
+	h.ap.Logger.Info("Make Reservation Success")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
@@ -100,6 +121,8 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		h.ap.Logger.Error("Invalid Form", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	form := forms.New(r.Form)
