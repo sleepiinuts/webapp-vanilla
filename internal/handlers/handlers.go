@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/sleepiinuts/webapp-plain/configs"
+	"github.com/sleepiinuts/webapp-plain/internal/forms"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
@@ -23,10 +25,11 @@ var rooms = map[int]RoomsInfo{
 type Handler struct {
 	r  *renders.Renderer
 	sm *scs.SessionManager
+	ap *configs.AppProperties
 }
 
-func New(r *renders.Renderer, sm *scs.SessionManager) *Handler {
-	return &Handler{r: r, sm: sm}
+func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties) *Handler {
+	return &Handler{r: r, sm: sm, ap: ap}
 }
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
@@ -47,10 +50,22 @@ func (h *Handler) Contact(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Rooms(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	var (
+		id  int
+		err error
+	)
+
+	if r.URL.Query().Get("id") != "" {
+		id, err = strconv.Atoi(r.URL.Query().Get("id"))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		h.sm.Put(r.Context(), "roomId", id)
+		// h.ap.Logger.Info("StoreId", "roomId", h.sm.Get(r.Context(), "roomId"))
+	} else {
+		id = h.sm.PopInt(r.Context(), "roomId")
 	}
 
 	if _, ok := rooms[id]; !ok {
@@ -80,7 +95,30 @@ func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 	// parse session-message to template data
 	// w.Write([]byte("datepicker: " + r.URL.Query().Get("datepicker")))
-	fmt.Printf("here:%s\n", r.FormValue("datepicker"))
 
-	h.r.RenderTemplateFromMap(w, r, "index.tmpl", &models.Template{})
+	// populate r.Form
+	err := r.ParseForm()
+	if err != nil {
+		h.ap.Logger.Error("Invalid Form", "err", err)
+	}
+
+	form := forms.New(r.Form)
+
+	// check for required fields
+	form.Require("datepicker")
+	if !form.IsValid() {
+
+		id := fmt.Sprintf("%v", h.sm.Get(r.Context(), "roomId"))
+		if id != "" {
+			http.Redirect(w, r, fmt.Sprintf("/rooms?id=%s", id), http.StatusSeeOther)
+		} else {
+			h.ap.Logger.Error("Invalid RoomId", "id", id)
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		}
+
+		return
+	}
+
+	h.ap.Logger.Info("Booking Success", "dateRange", r.FormValue("datepicker"))
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -46,6 +46,6 @@ func init() {
 	sm.Cookie.Secure = ap.Cookies.Secure
 
 	r = renders.New(ap)
-	h = handlers.New(r, sm)
+	h = handlers.New(r, sm, ap)
 
 }
