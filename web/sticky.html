@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        background-color: #306bac;
+      }
+      .noti-container {
+        position: relative;
+      }
+      .noti-content-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        position: absolute;
+        right: 0;
+        height: 50%;
+        z-index: 10;
+      }
+      .noti-content {
+        display: flex;
+        align-items: flex-start;
+        width: 20%;
+        position: sticky;
+        top: 0;
+      }
+      .noti-content p {
+        margin-top: 0;
+        width: 90%;
+        display: inline-block;
+      }
+      .noti-content span {
+        background-color: #fc440f;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .noti-content span:hover {
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+    </style>
+
+    <title>Sticky</title>
+  </head>
+  <body>
+    <div class="main">
+      <div class="noti-container">
+        <div class="noti-content-wrapper">
+          <div class="noti-content">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente
+              aperiam saepe recusandae numquam odit consequuntur, autem eius
+              quod totam consectetur vel magnam, facilis voluptatibus dolores
+              similique in officiis maiores suscipit?
+            </p>
+            <span>&#x2715;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

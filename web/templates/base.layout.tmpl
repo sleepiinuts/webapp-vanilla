@@ -19,6 +19,49 @@
         color: white;
         font-size: 80%;
       }
+      .noti-container {
+        position: relative;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .noti-content {
+        display: flex;
+        align-items: flex-start;
+        width: 20%;
+        position: fixed;
+        z-index: 10;
+
+        background-color: #18a999;
+        padding: 0.2rem;
+        border: 2px solid white;
+        border-radius: 0.5rem;
+        opacity: 0.4;
+        transition: all 0.5s ease-in-out;
+      }
+      .noti-content .hidden {
+        opacity: 0;
+      }
+      .noti-content:hover {
+        opacity: 1;
+      }
+      .noti-content p {
+        width: 90%;
+        display: inline-block;
+      }
+      .noti-content span {
+        background-color: #fc440f;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 0.5rem;
+      }
+
+      .noti-content span:hover {
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
     </style>
 
     {{block "css" .}}
@@ -94,6 +137,16 @@
       </div>
     </nav>
 
+    <!-- flash notification -->
+    {{if not (isEmptyFlash .Flash) }}
+    <div class="noti-container">
+      <div class="noti-content">
+        <p>{{if .Flash}}{{.Flash.Body}}{{ end }}</p>
+        <span>&#x2715;</span>
+      </div>
+    </div>
+    {{ end }}
+
     {{block "content" .}}
     {{ end }}
 
@@ -113,6 +166,17 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
+    <script>
+      var noti = document.querySelector("noti-content");
+      if (noti !== null) {
+        // setTimeout(() => {
+        //   noti.classList.add("hidden");
+        //   console.log("here");
+        // }, 100);
+      }
+      // noti.classList.add("hidden");
+      console.log("here");
+    </script>
 
     {{block "js" .}}
     {{ end }}

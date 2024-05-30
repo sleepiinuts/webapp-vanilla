@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/justinas/nosurf"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
@@ -16,12 +17,21 @@ const btPath = basePath + "base.tmpl"
 // var tc = make(map[string]*template.Template)
 // var logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-type Renderer struct {
-	ap *configs.AppProperties
+var funcMap = template.FuncMap{
+	"isEmptyFlash": isEmptyFlash,
 }
 
-func New(ap *configs.AppProperties) *Renderer {
-	return &Renderer{ap: ap}
+func isEmptyFlash(f models.Flash) bool {
+	return f == models.Flash{}
+}
+
+type Renderer struct {
+	ap *configs.AppProperties
+	sm *scs.SessionManager
+}
+
+func New(ap *configs.AppProperties, sm *scs.SessionManager) *Renderer {
+	return &Renderer{ap: ap, sm: sm}
 }
 
 func (r *Renderer) RenderTemplate(w http.ResponseWriter, tmpl string) {
@@ -51,7 +61,7 @@ func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, rq *http.Request
 	if _, ok := r.ap.Tc[tmpl]; !ok || !r.ap.UseCache {
 
 		// initial template
-		page, err := template.New(tmpl).ParseFiles(basePath + tmpl)
+		page, err := template.New(tmpl).Funcs(funcMap).ParseFiles(basePath + tmpl)
 		if err != nil {
 			r.ap.Logger.Error("template initializing: ", "error", err)
 			return
@@ -78,6 +88,16 @@ func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, rq *http.Request
 
 		r.ap.Logger.Info("caching template", "path", tPath)
 		r.ap.Tc[tmpl] = parsedTmpl
+	}
+
+	// get flash info if any
+	if r.sm.Get(rq.Context(), "Flash") != nil {
+		flash, ok := r.sm.Pop(rq.Context(), "Flash").(models.Flash)
+		if !ok {
+			r.ap.Logger.Error("Flash casting")
+		} else {
+			td.Flash = flash
+		}
 	}
 
 	err := r.ap.Tc[tmpl].Execute(w, td)
