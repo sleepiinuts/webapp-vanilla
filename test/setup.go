@@ -1,39 +1,42 @@
-package main
+package test
 
 import (
 	"encoding/gob"
 	"html/template"
 	"log/slog"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/sleepiinuts/webapp-plain/configs"
-	"github.com/sleepiinuts/webapp-plain/internal/handlers"
-	"github.com/sleepiinuts/webapp-plain/internal/renders"
-	"github.com/sleepiinuts/webapp-plain/internal/routes"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
 
-const port = ":8080"
-
 var (
 	ap *configs.AppProperties
-	r  *renders.Renderer
-	h  *handlers.Handler
 	sm *scs.SessionManager
 )
 
-func main() {
-	// http.HandleFunc("/", h.Home)
-	// http.HandleFunc("/about", h.About)
-
-	ap.Logger.Info("Starting application", "port", port)
-	http.ListenAndServe(port, sm.LoadAndSave(routes.Routes(h, ap)))
+type Cases struct {
+	Name     string
+	Req      Request
+	Resp     Response
+	IsExpErr bool
+	ExpErr   error
 }
 
-func init() {
+type Request struct {
+	Path        string
+	Method      string
+	QueryParams map[string]string
+	PostForm    map[string]string
+}
+type Response struct {
+	HttpStatus int
+}
+
+func GetDependencies() (*configs.AppProperties, *scs.SessionManager) {
+
 	ap = configs.New(
 		make(map[string]*template.Template),
 		false,
@@ -47,9 +50,7 @@ func init() {
 	sm.Cookie.SameSite = ap.Cookies.SameSite
 	sm.Cookie.Secure = ap.Cookies.Secure
 
-	r = renders.New(ap, sm, "../web/templates/")
-	h = handlers.New(r, sm, ap)
-
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
+	return ap, sm
 }
