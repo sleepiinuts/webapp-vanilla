@@ -1,0 +1,2 @@
+add_index("rooms","user_id",{"name":"rooms_user_id_idx"})
+add_index("rooms","name",{"name":"rooms_name_idx"})

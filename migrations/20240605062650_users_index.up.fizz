@@ -1,0 +1,2 @@
+add_index("users","last_name",{"name":"users_last_name_idx"})
+add_index("users","email",{"name":"users_email_idx"})

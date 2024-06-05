@@ -1,0 +1,2 @@
+add_index("reservations","room_id",{"name":"reservations_room_id_idx"})
+add_index("reservations",["arrival","departure"],{"name":"reservations_arrival_departure_idx"})

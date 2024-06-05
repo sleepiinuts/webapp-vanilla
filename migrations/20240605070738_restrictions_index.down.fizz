@@ -1,0 +1,2 @@
+drop_index("restrictions","restriction_type_idx")
+drop_index("restrictions","restriction_period_idx")

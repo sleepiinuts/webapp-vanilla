@@ -1,0 +1,2 @@
+drop_index("rooms","rooms_user_id_idx")
+drop_index("rooms","rooms_name_idx")

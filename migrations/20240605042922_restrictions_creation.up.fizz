@@ -1,0 +1,7 @@
+create_table("restrictions") {
+  t.Column("id", "integer", {primary:true})
+  t.Column("room_id", "integer", {})
+  t.Column("type", "varchar", {"size": 100})
+  t.Column("effective", "date", {})
+  t.Column("expire","date",{})
+}

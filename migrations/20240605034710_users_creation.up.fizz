@@ -1,0 +1,9 @@
+create_table("users") {
+  t.Column("id", "integer", {primary:true})
+  t.Column("first_name", "varchar", {"size": 100})
+  t.Column("last_name", "varchar", {"size": 100})
+  t.Column("email", "varchar", {"size": 100})
+  t.Column("password", "varchar", {"size": 60})
+  t.Column("phone", "varchar", {"size": 10})
+  t.Column("role", "varchar", {"size": 10})
+}

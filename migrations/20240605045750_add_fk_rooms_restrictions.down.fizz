@@ -1,0 +1,2 @@
+drop_foreign_key("restrictions", "room_restrictions_fk", {"if_exists": true})
+drop_index("restrictions","restrictions_room_id_idx")

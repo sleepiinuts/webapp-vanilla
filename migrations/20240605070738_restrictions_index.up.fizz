@@ -1,0 +1,2 @@
+add_index("restrictions","type",{"name":"restriction_type_idx"})
+add_index("restrictions",["effective","expire"],{"name":"restriction_period_idx"})

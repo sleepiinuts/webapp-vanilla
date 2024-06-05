@@ -1,0 +1,2 @@
+drop_foreign_key("users", "user_reservations_fk", {"if_exists": true})
+drop_index("reservations","reservations_user_id_idx")
