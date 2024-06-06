@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/gob"
 	"html/template"
 	"log/slog"
@@ -23,13 +24,16 @@ var (
 	r  *renders.Renderer
 	h  *handlers.Handler
 	sm *scs.SessionManager
+
+	db *sql.DB
 )
 
 func main() {
+	defer db.Close()
 	// http.HandleFunc("/", h.Home)
 	// http.HandleFunc("/about", h.About)
 
-	ap.Logger.Info("Starting application", "port", port)
+	ap.Logger.Info("starting application", "port", port)
 	http.ListenAndServe(port, sm.LoadAndSave(routes.Routes(h, ap)))
 }
 
@@ -52,4 +56,6 @@ func init() {
 
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
+
+	db = connectDB()
 }
