@@ -1,6 +1,5 @@
-add_index("reservations", "user_id", {"unique": true,"name":"reservations_user_id_idx"})
 
-add_foreign_key("users", "id", {"reservations": ["user_id"]}, {
+add_foreign_key("reservations", "user_id", {"users": ["id"]}, {
     "name": "user_reservations_fk",
     "on_delete": "cascade",
     "on_update": "cascade",
