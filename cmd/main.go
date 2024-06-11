@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/gob"
 	"html/template"
 	"log/slog"
@@ -10,6 +9,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/jmoiron/sqlx"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/internal/handlers"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
@@ -25,7 +25,7 @@ var (
 	h  *handlers.Handler
 	sm *scs.SessionManager
 
-	db *sql.DB
+	db *sqlx.DB
 )
 
 func main() {
