@@ -116,13 +116,6 @@ func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 		Type: models.FTInfo,
 	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-
-	// h.r.Redirect(w, r, "index.tmpl", &models.Template{
-	// 	Flash: models.Flash{
-	// 		Body: "Make Reservation Success",
-	// 		Type: models.FTSuccess,
-	// 	},
-	// })
 }
 
 func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
