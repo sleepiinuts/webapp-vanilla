@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 type DBConfig struct {
@@ -35,6 +36,8 @@ var DBConf = DBConfig{
 	Pwd:  "P@ssw0rd",
 	DB:   "go-webapp-vanilla",
 }
+
+var DateFormat = time.DateOnly
 
 func New(tc map[string]*template.Template, usecache bool, logger *slog.Logger) *AppProperties {
 	return &AppProperties{
