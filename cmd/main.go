@@ -15,6 +15,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/internal/routes"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
 )
 
 const port = ":8080"
@@ -52,7 +53,11 @@ func init() {
 	sm.Cookie.Secure = ap.Cookies.Secure
 
 	r = renders.New(ap, sm, "../web/templates/")
-	h = handlers.New(r, sm, ap)
+
+	// TODO: implement reservation_postgres
+	rs := reservations.New(&reservations.MockReservation{})
+
+	h = handlers.New(r, sm, ap, rs)
 
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
