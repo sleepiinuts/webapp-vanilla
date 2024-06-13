@@ -48,3 +48,7 @@ func (f *Form) IsValidEmail(fields ...string) {
 func (f *Form) GetErrors() map[string][]string {
 	return f.errors
 }
+
+func (f *Form) GetField(name string) string {
+	return f.data.Get(name)
+}
