@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
 
@@ -16,13 +17,20 @@ type Period struct {
 	To   time.Time
 }
 
+func (p *Period) String() string {
+	return fmt.Sprintf("{From: %s,To: %s}",
+		p.From.Format(configs.DateFormat),
+		p.To.Format(configs.DateFormat),
+	)
+}
+
 func New(repo ReservationRepos) *ReservationServ {
 	return &ReservationServ{repo: repo}
 }
 
-func (rs *ReservationServ) ListAvailRooms(arr, dep time.Time) (map[int][]*Period, error) {
+func (rs *ReservationServ) ListAvailRooms(inqRooms []int, arr, dep time.Time) (map[int][]*Period, error) {
 	// TODO: make inq all room service
-	allRooms := []int{1, 2, 3, 4}
+	// inqRooms := []int{1, 2, 3, 4}
 
 	bookedRooms, err := rs.repo.findByArrivalAndDeparture(arr, dep)
 	availRooms := make(map[int][]*Period)
@@ -32,7 +40,7 @@ func (rs *ReservationServ) ListAvailRooms(arr, dep time.Time) (map[int][]*Period
 		return map[int][]*Period{}, fmt.Errorf("listAvailRooms: %w", err)
 	}
 
-	for _, id := range allRooms {
+	for _, id := range inqRooms {
 
 		if reserv, ok := bookedRooms[id]; !ok {
 			availRooms[id] = []*Period{inquiredPeriod}
