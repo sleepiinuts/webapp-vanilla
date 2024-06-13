@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
 	"github.com/sleepiinuts/webapp-plain/test"
 )
 
@@ -121,7 +122,8 @@ func TestHandlers(t *testing.T) {
 func init() {
 	ap, sm = test.GetDependencies()
 	r = renders.New(ap, sm, "../../web/templates/")
-	h = New(r, sm, ap)
+	rs := reservations.New(&reservations.MockReservation{})
+	h = New(r, sm, ap, rs)
 
 	// routes.Routes(h,ap)
 	mux := chi.NewRouter()

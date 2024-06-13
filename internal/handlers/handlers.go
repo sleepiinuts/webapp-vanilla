@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/internal/forms"
+	"github.com/sleepiinuts/webapp-plain/internal/helpers"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
 )
 
 type RoomsInfo struct {
@@ -26,10 +29,11 @@ type Handler struct {
 	r  *renders.Renderer
 	sm *scs.SessionManager
 	ap *configs.AppProperties
+	rs *reservations.ReservationServ
 }
 
-func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties) *Handler {
-	return &Handler{r: r, sm: sm, ap: ap}
+func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties, rs *reservations.ReservationServ) *Handler {
+	return &Handler{r: r, sm: sm, ap: ap, rs: rs}
 }
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
@@ -125,7 +129,7 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 	// populate r.Form
 	err := r.ParseForm()
 	if err != nil {
-		h.ap.Logger.Error("Invalid Form", "err", err)
+		h.ap.Logger.Error("invalid Form", "err", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -134,17 +138,38 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 
 	// check for required fields
 	form.Require("datepicker")
-	if !form.IsValid() {
+	if form.IsValid() {
 
 		id := fmt.Sprintf("%v", h.sm.Get(r.Context(), "roomId"))
 		if id != "" {
+			// TODO:
+			// move below logic outside form.IsValid()!!
+
+			// TODO:
+			// (1) check for roomId availability
+			// (2) redirect to reservation summary
+			// (3) there, let user choose to comfirm available date range(s)
+			dtRange := strings.Split(form.GetField("datepicker"), " - ")
+
+			sd := helpers.MustParseTime(dtRange[0])
+			ed := helpers.MustParseTime(dtRange[1])
+
+			avlPeriod, err := h.rs.ListAvailRooms([]int{helpers.MustParseInt(id)}, sd, ed)
+			if err != nil {
+				h.ap.Logger.Error("list avail rooms", "error", err)
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+				return
+			}
+
+			h.ap.Logger.Info("available period", "avlPeriod", avlPeriod)
+
 			http.Redirect(w, r, fmt.Sprintf("/rooms?id=%s", id), http.StatusSeeOther)
 		} else {
 			h.ap.Logger.Error("Invalid RoomId", "id", id)
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
 
-		return
+		// return
 	}
 
 	h.ap.Logger.Info("Booking Success", "dateRange", r.FormValue("datepicker"))
