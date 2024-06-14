@@ -138,40 +138,48 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 
 	// check for required fields
 	form.Require("datepicker")
-	if form.IsValid() {
+	id := fmt.Sprintf("%v", h.sm.Get(r.Context(), "roomId"))
 
-		id := fmt.Sprintf("%v", h.sm.Get(r.Context(), "roomId"))
+	redirect := func(id string) {
 		if id != "" {
-			// TODO:
-			// move below logic outside form.IsValid()!!
-
-			// TODO:
-			// (1) check for roomId availability
-			// (2) redirect to reservation summary
-			// (3) there, let user choose to comfirm available date range(s)
-			dtRange := strings.Split(form.GetField("datepicker"), " - ")
-
-			sd := helpers.MustParseTime(dtRange[0])
-			ed := helpers.MustParseTime(dtRange[1])
-
-			avlPeriod, err := h.rs.ListAvailRooms([]int{helpers.MustParseInt(id)}, sd, ed)
-			if err != nil {
-				h.ap.Logger.Error("list avail rooms", "error", err)
-				http.Redirect(w, r, "/", http.StatusSeeOther)
-				return
-			}
-
-			h.ap.Logger.Info("available period", "avlPeriod", avlPeriod)
-
 			http.Redirect(w, r, fmt.Sprintf("/rooms?id=%s", id), http.StatusSeeOther)
 		} else {
-			h.ap.Logger.Error("Invalid RoomId", "id", id)
+			h.ap.Logger.Error("invalid RoomId", "id", id)
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
-
-		// return
 	}
 
+	if !form.IsValid() {
+		h.ap.Logger.Error("invalid form: missing date picker")
+
+		redirect(id)
+		return
+	}
+
+	dtRange := strings.Split(form.GetField("datepicker"), " - ")
+	if len(dtRange) != 2 {
+		h.ap.Logger.Error("invalid format datepicker", "datepicker", form.GetField("datepicker"))
+
+		redirect(id)
+		return
+	}
+
+	sd := helpers.MustParseTime(dtRange[0])
+	ed := helpers.MustParseTime(dtRange[1])
+
+	avlPeriod, err := h.rs.ListAvailRooms([]int{helpers.MustParseInt(id)}, sd, ed)
+	if err != nil {
+		h.ap.Logger.Error("list avail rooms", "error", err)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	h.ap.Logger.Info("available period", "avlPeriod", avlPeriod)
 	h.ap.Logger.Info("Booking Success", "dateRange", r.FormValue("datepicker"))
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (h *Handler) ReservationSumm(w http.ResponseWriter, r *http.Request) {
+	h.r.RenderTemplateFromMap(w, r, "reservation-summary.tmpl", &models.Template{})
 }
