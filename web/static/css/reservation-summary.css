@@ -1,0 +1,16 @@
+table > tbody > tr > td > span {
+  border: 2px solid #cdeac0;
+  border-radius: 0.5rem;
+  padding: 0.2rem;
+  margin-right: 0.2rem;
+}
+
+table > tbody > tr > td > span:hover {
+  background-color: #cdeac0;
+  color: #042a2b;
+  cursor: pointer;
+}
+
+.clicked {
+  background-color: #cdeac0;
+}
