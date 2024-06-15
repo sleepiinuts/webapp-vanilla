@@ -177,6 +177,12 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 	h.ap.Logger.Info("available period", "avlPeriod", avlPeriod)
 	h.ap.Logger.Info("Booking Success", "dateRange", r.FormValue("datepicker"))
 
+	// pass data to reservation summary page
+	h.sm.Put(r.Context(), "datepicker", form.GetField("datepicker"))
+	h.sm.Put(r.Context(), "avlPeriod", avlPeriod)
+
+	// TODO: make reservation-summary page
+	// redirect to xx page
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 

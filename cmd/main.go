@@ -62,5 +62,8 @@ func init() {
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
 
+	// register map[int][]*reservations.period
+	gob.Register(map[int][]*reservations.Period{})
+
 	db = connectDB()
 }
