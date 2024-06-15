@@ -123,8 +123,9 @@ func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
-	// parse session-message to template data
-	// w.Write([]byte("datepicker: " + r.URL.Query().Get("datepicker")))
+	// TODO: make the caller put room(s) into session
+
+	// TODO: get Room(s) from session
 
 	// populate r.Form
 	err := r.ParseForm()
@@ -183,9 +184,34 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: make reservation-summary page
 	// redirect to xx page
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 }
 
 func (h *Handler) ReservationSumm(w http.ResponseWriter, r *http.Request) {
-	h.r.RenderTemplateFromMap(w, r, "reservation-summary.tmpl", &models.Template{})
+	// get datepicker
+	datePicker, ok := h.sm.Get(r.Context(), "datepicker").(string)
+	if !ok {
+		h.ap.Logger.Error("datepicker not found")
+		http.Redirect(w, r, "/", http.StatusBadRequest)
+		return
+	}
+
+	// get avlPeriod
+	avlPeriod, ok := h.sm.Get(r.Context(), "avlPeriod").(map[int][]*reservations.Period)
+	if !ok {
+		h.ap.Logger.Error("avlPeriod not found")
+		http.Redirect(w, r, "/", http.StatusBadRequest)
+		return
+	}
+
+	h.ap.Logger.Debug("reservation-summ", "datepicker", datePicker, "avlPeriod", avlPeriod)
+
+	td := &models.Template{
+		Data: map[string]any{
+			"datepicker": datePicker,
+			"avlPeriod":  avlPeriod,
+		},
+	}
+
+	h.r.RenderTemplateFromMap(w, r, "reservation-summary.tmpl", td)
 }
