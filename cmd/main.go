@@ -39,6 +39,11 @@ func main() {
 }
 
 func init() {
+	// TODO: make flag for debug mode
+	// opts := &slog.HandlerOptions{
+	//     Level: slog.LevelDebug,
+	// } --> put this in NewTextHandler @nil position
+
 	ap = configs.New(
 		make(map[string]*template.Template),
 		false,
