@@ -10,9 +10,9 @@ const picker = new easepick.create({
       console.log("start: ", start);
       console.log("end: ", end);
 
-      fetch(`/check-room-avail?datepicker=${start}-${end}`).then((resp) => {
-        console.log(`Response: ${resp.text}`);
-      });
+      // fetch(`/check-room-avail?datepicker=${start}-${end}`).then((resp) => {
+      //   console.log(`Response: ${resp.text}`);
+      // });
     });
   },
   zIndex: 12,
