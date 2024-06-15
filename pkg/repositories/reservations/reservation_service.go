@@ -18,7 +18,7 @@ type Period struct {
 }
 
 func (p *Period) String() string {
-	return fmt.Sprintf("{From: %s,To: %s}",
+	return fmt.Sprintf("%s - %s",
 		p.From.Format(configs.DateFormat),
 		p.To.Format(configs.DateFormat),
 	)
@@ -29,8 +29,6 @@ func New(repo ReservationRepos) *ReservationServ {
 }
 
 func (rs *ReservationServ) ListAvailRooms(inqRooms []int, arr, dep time.Time) (map[int][]*Period, error) {
-	// TODO: make inq all room service
-	// inqRooms := []int{1, 2, 3, 4}
 
 	bookedRooms, err := rs.repo.findByArrivalAndDeparture(arr, dep)
 	availRooms := make(map[int][]*Period)
