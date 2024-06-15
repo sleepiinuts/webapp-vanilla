@@ -10,12 +10,14 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/jmoiron/sqlx"
+	"github.com/qustavo/dotsql"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/internal/handlers"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/internal/routes"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
 )
 
 const port = ":8080"
@@ -26,7 +28,8 @@ var (
 	h  *handlers.Handler
 	sm *scs.SessionManager
 
-	db *sqlx.DB
+	db   *sqlx.DB
+	dots map[string]*dotsql.DotSql
 )
 
 func main() {
@@ -49,6 +52,9 @@ func init() {
 		false,
 		slog.New(slog.NewTextHandler(os.Stdout, nil)))
 
+	db = connectDB()
+	prepSqlLoader()
+
 	// config session manager
 	sm = scs.New()
 	sm.Lifetime = 24 * time.Hour
@@ -61,8 +67,9 @@ func init() {
 
 	// TODO: implement reservation_postgres
 	rs := reservations.New(&reservations.MockReservation{})
+	rms := rooms.New(rooms.NewPostgresRoom(db, dots["room"]))
 
-	h = handlers.New(r, sm, ap, rs)
+	h = handlers.New(r, sm, ap, rs, rms)
 
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
@@ -70,5 +77,4 @@ func init() {
 	// register map[int][]*reservations.period
 	gob.Register(map[int][]*reservations.Period{})
 
-	db = connectDB()
 }
