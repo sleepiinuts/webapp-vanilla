@@ -6,7 +6,14 @@
 
 {{define "content"}}
 <h3>Available Room(s)</h3>
-<h6><strong>FROM:</strong> 2024-06-01 <strong>TO:</strong> 2024-06-12</h6>
+<h6>
+  <strong>TRIP:</strong>
+  {{if .Data}}
+  {{if index .Data "datepicker"}}
+  {{index .Data "datepicker"}}
+  {{ end }}
+  {{ end }}
+</h6>
 <br />
 <table class="table table-striped">
   <thead class="table-dark">
@@ -14,31 +21,29 @@
       <th scope="col">#</th>
       <th scope="col">Room Name</th>
       <th scope="col">Available Period(s)</th>
-      <th scope="col">Handle</th>
     </tr>
   </thead>
   <tbody class="table-group-divider">
+    {{if .Data}}
+    {{if index .Data "avlPeriod"}}
+    {{$rooms := index .Data "avlPeriod"}}
+    {{range $k1,$periods := $rooms}}
     <tr>
-      <th scope="row">1</th>
+      <th scope="row">{{ $k1 }}</th>
       <td>Grand Superior</td>
       <td>
-        <span onclick="clicked(event)">2024-06-01 - 2024-06-01</span
-        ><span onclick="clicked()">2024-06-05 - 2024-06-05</span
-        ><span onclick="clicked()">2024-06-08 - 2024-06-12</span>
+        {{range $k2,$value := $periods}}
+        <span onclick="clicked(event)">{{ $value }}</span>
+        {{ end }}
       </td>
-      <td>@mdo</td>
     </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
+    {{
+      end
+    }}{{
+      end
+    }}{{
+      end
+    }}
   </tbody>
 </table>
 {{ end }}
