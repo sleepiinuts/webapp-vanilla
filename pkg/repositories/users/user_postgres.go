@@ -7,19 +7,19 @@ import (
 	"github.com/qustavo/dotsql"
 )
 
-type PostgresUserRepos struct {
+type PostgresUser struct {
 	db     *sql.DB
 	dot    *dotsql.DotSql
 	logger *slog.Logger
 }
 
-func New(db *sql.DB, dot *dotsql.DotSql, logger *slog.Logger) *PostgresUserRepos {
-	return &PostgresUserRepos{db: db, dot: dot, logger: logger}
+func New(db *sql.DB, dot *dotsql.DotSql, logger *slog.Logger) *PostgresUser {
+	return &PostgresUser{db: db, dot: dot, logger: logger}
 }
 
 // new implements UserRepos.
-func (p *PostgresUserRepos) new(firstName, lastName, email, pwd, phone, role string) (*sql.Row, error) {
+func (p *PostgresUser) new(firstName, lastName, email, pwd, phone, role string) (*sql.Row, error) {
 	return p.dot.QueryRow(p.db, "new", firstName, lastName, email, pwd, phone, role)
 }
 
-var _ UserRepos = &PostgresUserRepos{}
+var _ UserRepos = &PostgresUser{}
