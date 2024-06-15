@@ -5,47 +5,49 @@
 {{ end }}
 
 {{define "content"}}
-<h3>Available Room(s)</h3>
-<h6>
-  <strong>TRIP:</strong>
-  {{if .Data}}
-  {{if index .Data "datepicker"}}
-  {{index .Data "datepicker"}}
-  {{ end }}
-  {{ end }}
-</h6>
-<br />
-<table class="table table-striped">
-  <thead class="table-dark">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Room Name</th>
-      <th scope="col">Available Period(s)</th>
-    </tr>
-  </thead>
-  <tbody class="table-group-divider">
+<div class="container">
+  <h3>Available Room(s)</h3>
+  <h6>
+    <strong>TRIP:</strong>
     {{if .Data}}
-    {{if index .Data "avlPeriod"}}
-    {{$rooms := index .Data "avlPeriod"}}
-    {{range $k1,$periods := $rooms}}
-    <tr>
-      <th scope="row">{{ $k1 }}</th>
-      <td>Grand Superior</td>
-      <td>
-        {{range $k2,$value := $periods}}
-        <span onclick="clicked(event)">{{ $value }}</span>
-        {{ end }}
-      </td>
-    </tr>
-    {{
-      end
-    }}{{
-      end
-    }}{{
-      end
-    }}
-  </tbody>
-</table>
+    {{if index .Data "datepicker"}}
+    {{index .Data "datepicker"}}
+    {{ end }}
+    {{ end }}
+  </h6>
+  <br />
+  <table class="table table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Room Name</th>
+        <th scope="col">Available Period(s)</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      {{if .Data}}
+      {{if index .Data "avlPeriod"}}
+      {{$rooms := index .Data "avlPeriod"}}
+      {{range $k1,$periods := $rooms}}
+      <tr>
+        <th scope="row">{{ $k1 }}</th>
+        <td>Grand Superior</td>
+        <td>
+          {{range $k2,$value := $periods}}
+          <span onclick="clicked(event)">{{ $value }}</span>
+          {{ end }}
+        </td>
+      </tr>
+      {{
+        end
+      }}{{
+        end
+      }}{{
+        end
+      }}
+    </tbody>
+  </table>
+</div>
 {{ end }}
 
 {{define "js"}}
