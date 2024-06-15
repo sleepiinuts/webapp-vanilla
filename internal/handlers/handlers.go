@@ -13,6 +13,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
+	rms "github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
 )
 
 type RoomsInfo struct {
@@ -26,14 +27,15 @@ var rooms = map[int]RoomsInfo{
 }
 
 type Handler struct {
-	r  *renders.Renderer
-	sm *scs.SessionManager
-	ap *configs.AppProperties
-	rs *reservations.ReservationServ
+	r   *renders.Renderer
+	sm  *scs.SessionManager
+	ap  *configs.AppProperties
+	rs  *reservations.ReservationServ
+	rms *rms.RoomServ
 }
 
-func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties, rs *reservations.ReservationServ) *Handler {
-	return &Handler{r: r, sm: sm, ap: ap, rs: rs}
+func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties, rs *reservations.ReservationServ, rms *rms.RoomServ) *Handler {
+	return &Handler{r: r, sm: sm, ap: ap, rs: rs, rms: rms}
 }
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +78,14 @@ func (h *Handler) Rooms(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
+
+	roomss, err := h.rms.FindAll()
+	if err != nil {
+		h.ap.Logger.Error("findAll", "error", err)
+		return
+	}
+
+	h.ap.Logger.Info("findAll", "rooms", roomss)
 
 	// parse session-message to template data
 	h.r.RenderTemplateFromMap(w, r, "rooms.tmpl", &models.Template{

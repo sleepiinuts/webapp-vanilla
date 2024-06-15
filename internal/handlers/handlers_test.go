@@ -123,7 +123,7 @@ func init() {
 	ap, sm = test.GetDependencies()
 	r = renders.New(ap, sm, "../../web/templates/")
 	rs := reservations.New(&reservations.MockReservation{})
-	h = New(r, sm, ap, rs)
+	h = New(r, sm, ap, rs, nil)
 
 	// routes.Routes(h,ap)
 	mux := chi.NewRouter()
