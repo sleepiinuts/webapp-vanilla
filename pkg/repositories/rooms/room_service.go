@@ -10,7 +10,7 @@ func New(repos RoomRepos) *RoomServ {
 	return &RoomServ{repos: repos}
 }
 
-func (rs *RoomServ) FindAll() ([]*models.Room, error) {
+func (rs *RoomServ) FindAll() (map[int]models.Room, error) {
 	return rs.repos.findAll()
 }
 

@@ -42,7 +42,7 @@ func (p *PostgresRoom) findById(id int) (*models.Room, error) {
 }
 
 // findAll implements RoomRepos.
-func (p *PostgresRoom) findAll() ([]*models.Room, error) {
+func (p *PostgresRoom) findAll() (map[int]models.Room, error) {
 	name := "findAll"
 
 	stmt, err := p.dot.Raw(name)
@@ -50,7 +50,7 @@ func (p *PostgresRoom) findAll() ([]*models.Room, error) {
 		return nil, fmt.Errorf("%s: %w: %w", name, ErrStmtNotFound, err)
 	}
 
-	var rooms []*models.Room
+	rooms := make(map[int]models.Room)
 
 	rows, err := p.db.Queryx(stmt)
 	if err != nil {
@@ -65,7 +65,7 @@ func (p *PostgresRoom) findAll() ([]*models.Room, error) {
 			return nil, fmt.Errorf("%s: %w: %w", name, ErrStructScan, err)
 		}
 
-		rooms = append(rooms, &room)
+		rooms[room.ID] = room
 	}
 
 	return rooms, nil
