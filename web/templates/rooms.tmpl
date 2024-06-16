@@ -26,27 +26,7 @@
     </div>
   </div>
 </div>
-
-<!-- working sheet z-index=1 -->
-<div id="calendarModal" class="modal">
-  <!-- modal content -->
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2>Please input your booking period</h2>
-      <span class="close">&times;</span>
-    </div>
-    <div class="modal-body">
-      <form action="/check-room-avail" method="post">
-        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
-        <input id="datepicker" name="datepicker" class="form-control" />
-        <button id="submitDateRange" class="btn btn-success">
-          &#x2714; abc
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-
+{{template "modals" .}}
 {{ end }}
 
 {{define "js"}}
