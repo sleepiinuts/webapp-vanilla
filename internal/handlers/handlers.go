@@ -167,11 +167,17 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 	ed := helpers.MustParseTime(dtRange[1])
 
 	// TODO: get Room(s) from session
+	// TODO: if !ok then put all rooms into session? --> meaning get redirect from homepage?
 	rooms, ok := h.sm.Get(r.Context(), "rooms").(map[int]models.Room)
 	if !ok {
-		h.ap.Logger.Error("[post-checkRoomAvail]handler", "error", "enable to get ROOMS from session")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		rooms, err = h.rms.FindAll()
+		h.sm.Put(r.Context(), "rooms", rooms)
+
+		if err != nil {
+			h.ap.Logger.Error("[post-checkRoomAvail]handler", "error", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 
 	// get room id(s)
@@ -198,7 +204,7 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ReservationSumm(w http.ResponseWriter, r *http.Request) {
 	// get datepicker
-	datePicker, ok := h.sm.Get(r.Context(), "datepicker").(string)
+	datePicker, ok := h.sm.Pop(r.Context(), "datepicker").(string)
 	if !ok {
 		h.ap.Logger.Error("datepicker not found")
 		http.Redirect(w, r, "/", http.StatusBadRequest)
@@ -206,7 +212,7 @@ func (h *Handler) ReservationSumm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get avlPeriod
-	avlPeriod, ok := h.sm.Get(r.Context(), "avlPeriod").(map[int][]*reservations.Period)
+	avlPeriod, ok := h.sm.Pop(r.Context(), "avlPeriod").(map[int][]*reservations.Period)
 	if !ok {
 		h.ap.Logger.Error("avlPeriod not found")
 		http.Redirect(w, r, "/", http.StatusBadRequest)
