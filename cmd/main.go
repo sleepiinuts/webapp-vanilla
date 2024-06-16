@@ -77,4 +77,6 @@ func init() {
 	// register map[int][]*reservations.period
 	gob.Register(map[int][]*reservations.Period{})
 
+	// register Room model
+	gob.Register(map[int]models.Room{})
 }

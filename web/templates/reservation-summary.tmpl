@@ -26,12 +26,18 @@
     </thead>
     <tbody class="table-group-divider">
       {{if .Data}}
-      {{if index .Data "avlPeriod"}}
-      {{$rooms := index .Data "avlPeriod"}}
-      {{range $k1,$periods := $rooms}}
+      {{$data := .Data}}
+      {{if index $data "avlPeriod"}}
+      {{$roomPeriods := index $data "avlPeriod"}}
+      {{range $roomId,$periods := $roomPeriods}}
       <tr>
-        <th scope="row">{{ $k1 }}</th>
-        <td>Grand Superior</td>
+        <th scope="row">{{ $roomId }}</th>
+        <td>
+          {{if index $data "rooms"}}
+          {{$rooms := index $data "rooms"}}
+          {{ (index $rooms $roomId).Name }}
+          {{ end }}
+        </td>
         <td>
           {{range $k2,$value := $periods}}
           <span onclick="clicked(event)">{{ $value }}</span>
