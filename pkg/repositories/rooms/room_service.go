@@ -13,3 +13,7 @@ func New(repos RoomRepos) *RoomServ {
 func (rs *RoomServ) FindAll() ([]*models.Room, error) {
 	return rs.repos.findAll()
 }
+
+func (rs *RoomServ) FindById(id int) (*models.Room, error) {
+	return rs.repos.findById(id)
+}

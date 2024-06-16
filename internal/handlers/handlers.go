@@ -16,16 +16,6 @@ import (
 	rms "github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
 )
 
-type RoomsInfo struct {
-	name string
-	img  string
-}
-
-var rooms = map[int]RoomsInfo{
-	1: {name: "Grand Superior", img: "../static/images/grandsuperior.png"},
-	2: {name: "Deluxe Room", img: "../static/images/deluxeroom.png"},
-}
-
 type Handler struct {
 	r   *renders.Renderer
 	sm  *scs.SessionManager
@@ -61,37 +51,32 @@ func (h *Handler) Rooms(w http.ResponseWriter, r *http.Request) {
 		err error
 	)
 
+	// enforce to get id
 	if r.URL.Query().Get("id") != "" {
 		id, err = strconv.Atoi(r.URL.Query().Get("id"))
 		if err != nil {
+			// TODO: more elegant way of handling error
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		h.sm.Put(r.Context(), "roomId", id)
-		// h.ap.Logger.Info("StoreId", "roomId", h.sm.Get(r.Context(), "roomId"))
 	} else {
 		id = h.sm.PopInt(r.Context(), "roomId")
 	}
 
-	if _, ok := rooms[id]; !ok {
+	room, err := h.rms.FindById(id)
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	roomss, err := h.rms.FindAll()
-	if err != nil {
-		h.ap.Logger.Error("findAll", "error", err)
-		return
-	}
-
-	h.ap.Logger.Info("findAll", "rooms", roomss)
-
 	// parse session-message to template data
 	h.r.RenderTemplateFromMap(w, r, "rooms.tmpl", &models.Template{
 		Data: map[string]any{
-			"name": rooms[id].name,
-			"img":  rooms[id].img,
+			"name": room.Name,
+			"img":  room.ImgPath,
+			"desc": room.Desc,
 		}})
 }
 

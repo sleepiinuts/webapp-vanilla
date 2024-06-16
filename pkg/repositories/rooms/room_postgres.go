@@ -20,6 +20,23 @@ type PostgresRoom struct {
 	// logger *slog.Logger
 }
 
+// findById implements RoomRepos.
+func (p *PostgresRoom) findById(id int) (*models.Room, error) {
+	name := "findById"
+	stmt, err := p.dot.Raw(name)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w: %w", name, ErrStmtNotFound, err)
+	}
+
+	var room models.Room
+	err = p.db.QueryRowx(stmt, id).StructScan(&room)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w: %w", name, ErrStmtExec, err)
+	}
+
+	return &room, nil
+}
+
 func NewPostgresRoom(db *sqlx.DB, dot *dotsql.DotSql) *PostgresRoom {
 	return &PostgresRoom{db: db, dot: dot}
 }
@@ -42,13 +59,13 @@ func (p *PostgresRoom) findAll() ([]*models.Room, error) {
 
 	defer rows.Close()
 	for rows.Next() {
-		var room *models.Room
-		err := rows.StructScan(room)
+		var room models.Room
+		err := rows.StructScan(&room)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w: %w", name, ErrStructScan, err)
 		}
 
-		rooms = append(rooms, room)
+		rooms = append(rooms, &room)
 	}
 
 	return rooms, nil
