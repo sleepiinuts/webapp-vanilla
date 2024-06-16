@@ -20,6 +20,10 @@ type PostgresRoom struct {
 	// logger *slog.Logger
 }
 
+func NewPostgresRoom(db *sqlx.DB, dot *dotsql.DotSql) *PostgresRoom {
+	return &PostgresRoom{db: db, dot: dot}
+}
+
 // findById implements RoomRepos.
 func (p *PostgresRoom) findById(id int) (*models.Room, error) {
 	name := "findById"
@@ -35,10 +39,6 @@ func (p *PostgresRoom) findById(id int) (*models.Room, error) {
 	}
 
 	return &room, nil
-}
-
-func NewPostgresRoom(db *sqlx.DB, dot *dotsql.DotSql) *PostgresRoom {
-	return &PostgresRoom{db: db, dot: dot}
 }
 
 // findAll implements RoomRepos.

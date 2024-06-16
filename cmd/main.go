@@ -66,7 +66,7 @@ func init() {
 	r = renders.New(ap, sm, "../web/templates/")
 
 	// TODO: implement reservation_postgres
-	rs := reservations.New(&reservations.MockReservation{})
+	rs := reservations.New(reservations.NewPostgresReservation(db, dots["reservation"]))
 	rms := rooms.New(rooms.NewPostgresRoom(db, dots["room"]))
 
 	h = handlers.New(r, sm, ap, rs, rms)

@@ -20,4 +20,12 @@ func prepSqlLoader() {
 
 		dots["room"] = dot
 	}
+
+	if dot, err := dotsql.LoadFromFile(basePath + "/reservations/reservation.sql"); true {
+		if err != nil {
+			log.Fatal("reservation sql loader error: ", err)
+		}
+
+		dots["reservation"] = dot
+	}
 }
