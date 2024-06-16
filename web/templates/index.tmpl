@@ -1,5 +1,9 @@
 {{template "base". }}
 
+{{define "css"}}
+<link rel="stylesheet" href="../static/css/modal.css" />
+{{ end }}
+
 {{define "content"}}
 <div
   id="carouselAutoFade"
@@ -92,10 +96,16 @@
 
   <div class="row">
     <div class="col text-center">
-      <a href="/make-reservation" class="btn btn-success"
-        >Make Reservation Now</a
-      >
+      <button id="seeAvailBtn" class="btn btn-success">See Availability</button>
     </div>
   </div>
+  {{template "modals" .}}
 </div>
+{{ end }}
+
+{{define "js"}}
+<script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
+<script src="../static/js/datepicker.js"></script>
+<script src="../static/js/modal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@easepick/bundle@1.2.1/dist/index.umd.min.js"></script>
 {{ end }}
