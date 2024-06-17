@@ -65,7 +65,7 @@ func init() {
 
 	r = renders.New(ap, sm, "../web/templates/")
 
-	// TODO: implement reservation_postgres
+	// services
 	rs := reservations.New(reservations.NewPostgresReservation(db, dots["reservation"]))
 	rms := rooms.New(rooms.NewPostgresRoom(db, dots["room"]))
 
