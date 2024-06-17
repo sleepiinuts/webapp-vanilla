@@ -137,11 +137,19 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 
 	// check for required fields
 	form.Require("datepicker")
-	id := fmt.Sprintf("%v", h.sm.Get(r.Context(), "roomId"))
+	id := h.sm.Get(r.Context(), "roomId")
 
-	redirect := func(id string) {
-		if id != "" {
-			http.Redirect(w, r, fmt.Sprintf("/rooms?id=%s", id), http.StatusSeeOther)
+	redirect := func(id any) {
+
+		if id == nil {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		rid := id.(string)
+
+		if rid != "" {
+			http.Redirect(w, r, fmt.Sprintf("/rooms?id=%s", rid), http.StatusSeeOther)
 		} else {
 			// h.ap.Logger.Error("invalid RoomId", "id", id)
 			http.Redirect(w, r, "/", http.StatusSeeOther)
