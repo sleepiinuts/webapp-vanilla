@@ -4,12 +4,14 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
+	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
 	"github.com/sleepiinuts/webapp-plain/test"
@@ -22,6 +24,8 @@ var (
 	h       *Handler
 	handler http.Handler
 )
+
+type sessionValues map[string]any
 
 // const (
 // 	contentTypeJSON = "application/json"
@@ -120,6 +124,78 @@ func TestHandlers(t *testing.T) {
 	}
 }
 
+func TestPostCheckRoomAvail(t *testing.T) {
+	// TODO: add redirect location??
+	var cases = []struct {
+		name           string
+		genUrlValues   func() url.Values
+		smv            map[string]any
+		expectedStatus int
+	}{
+		{
+			name: "happy case",
+			genUrlValues: func() url.Values {
+				values := url.Values{}
+				values.Add("datepicker", "2024-06-01 - 2024-06-12")
+				return values
+			},
+			smv: map[string]any{
+				"roomId": 1,
+				"rooms": map[int]models.Room{
+					1: {ID: 1, Name: "Grand Superiod", Desc: "sample grand superior description",
+						Price: 100.5, ImgPath: "../static/images/grandsuperior.png"},
+					2: {ID: 2, Name: "Deluxe Room", Desc: "sample deluxe room description",
+						Price: 80.75, ImgPath: "../static/images/deluxeroom.png"},
+				},
+			},
+			expectedStatus: http.StatusSeeOther,
+		},
+		{
+			name:           "no form parsed",
+			genUrlValues:   func() url.Values { return nil },
+			smv:            nil,
+			expectedStatus: http.StatusSeeOther,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			// set up form: datepicker
+			req := httptest.NewRequest(http.MethodPost, "/check-roomm-avail", strings.NewReader(c.genUrlValues().Encode()))
+			req.Header.Set("Content-type", "application/x-www-form-urlencoded")
+
+			rec := httptest.NewRecorder()
+			mockSessionValues(sm, c.smv)(http.HandlerFunc(h.PostCheckRoomAvail)).ServeHTTP(rec, req)
+
+			got := rec.Result()
+			if got.StatusCode != c.expectedStatus {
+				t.Fail()
+				t.Logf("unexpected status code: expected %d, but got %d\n", c.expectedStatus, got.StatusCode)
+			}
+
+			t.Logf("redirect: %s", got.Header.Get("Location"))
+
+		})
+	}
+}
+
+func mockSessionValues(sm *scs.SessionManager, smv sessionValues) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return sm.LoadAndSave(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			for k, v := range smv {
+				sm.Put(r.Context(), k, v)
+			}
+
+			next.ServeHTTP(w, r)
+
+			// // clean up session
+			// for k := range smv {
+			// 	sm.Pop(r.Context(), k)
+			// }
+			sm.Clear(r.Context())
+		}))
+	}
+}
 func init() {
 	ap, sm = test.GetDependencies()
 	r = renders.New(ap, sm, "../../web/templates/")
@@ -153,5 +229,6 @@ func init() {
 	// if not stripPrefix, when serve /static, go will look for /web/static/static
 	mux.Handle("/static/*", http.StripPrefix("/static", fs))
 
+	// setup handler
 	handler = sm.LoadAndSave(mux)
 }
