@@ -10,6 +10,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
 )
 
 var (
@@ -52,5 +53,11 @@ func GetDependencies() (*configs.AppProperties, *scs.SessionManager) {
 
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
+
+	// register map[int][]*reservations.period
+	gob.Register(map[int][]*reservations.Period{})
+
+	// register Room model
+	gob.Register(map[int]models.Room{})
 	return ap, sm
 }

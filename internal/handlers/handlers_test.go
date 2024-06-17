@@ -11,6 +11,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
 	"github.com/sleepiinuts/webapp-plain/test"
 )
 
@@ -122,8 +123,12 @@ func TestHandlers(t *testing.T) {
 func init() {
 	ap, sm = test.GetDependencies()
 	r = renders.New(ap, sm, "../../web/templates/")
+
+	// services
 	rs := reservations.New(&reservations.MockReservation{})
-	h = New(r, sm, ap, rs, nil)
+	rms := rooms.New(&rooms.MockRoom{})
+
+	h = New(r, sm, ap, rs, rms)
 
 	// routes.Routes(h,ap)
 	mux := chi.NewRouter()
