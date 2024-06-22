@@ -146,13 +146,13 @@ func (h *Handler) PostCheckRoomAvail(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		rid := id.(string)
+		rid, err := strconv.Atoi(id.(string))
 
-		if rid != "" {
-			http.Redirect(w, r, fmt.Sprintf("/rooms?id=%s", rid), http.StatusSeeOther)
-		} else {
-			// h.ap.Logger.Error("invalid RoomId", "id", id)
+		if err != nil {
+			h.ap.Logger.Error("invalid RoomId", "id", id)
 			http.Redirect(w, r, "/", http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, fmt.Sprintf("/rooms?id=%d", rid), http.StatusSeeOther)
 		}
 	}
 

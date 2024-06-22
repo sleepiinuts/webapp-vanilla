@@ -131,6 +131,7 @@ func TestPostCheckRoomAvail(t *testing.T) {
 		genUrlValues   func() url.Values
 		smv            map[string]any
 		expectedStatus int
+		dstLoc         string
 	}{
 		{
 			name: "happy case",
@@ -140,7 +141,7 @@ func TestPostCheckRoomAvail(t *testing.T) {
 				return values
 			},
 			smv: map[string]any{
-				"roomId": 1,
+				"roomId": "1",
 				"rooms": map[int]models.Room{
 					1: {ID: 1, Name: "Grand Superiod", Desc: "sample grand superior description",
 						Price: 100.5, ImgPath: "../static/images/grandsuperior.png"},
@@ -148,12 +149,51 @@ func TestPostCheckRoomAvail(t *testing.T) {
 						Price: 80.75, ImgPath: "../static/images/deluxeroom.png"},
 				},
 			},
+			dstLoc:         "/reservation-summary",
 			expectedStatus: http.StatusSeeOther,
 		},
 		{
 			name:           "no form parsed",
 			genUrlValues:   func() url.Values { return nil },
 			smv:            nil,
+			expectedStatus: http.StatusSeeOther,
+			dstLoc:         "/",
+		},
+		{
+			name:         "no form parsed & roomId not a number",
+			genUrlValues: func() url.Values { return nil },
+			smv: map[string]any{
+				"roomId": "abc",
+			},
+			expectedStatus: http.StatusSeeOther,
+			dstLoc:         "/",
+		},
+		{
+			name:         "no form parsed & with roomId",
+			genUrlValues: func() url.Values { return nil },
+			smv: map[string]any{
+				"roomId": "1",
+			},
+			expectedStatus: http.StatusSeeOther,
+			dstLoc:         "/rooms?id=1",
+		},
+		{
+			name: "datepicker split error",
+			genUrlValues: func() url.Values {
+				values := url.Values{}
+				values.Add("datepicker", "2024-06-01")
+				return values
+			},
+			smv: map[string]any{
+				"roomId": "1",
+				"rooms": map[int]models.Room{
+					1: {ID: 1, Name: "Grand Superiod", Desc: "sample grand superior description",
+						Price: 100.5, ImgPath: "../static/images/grandsuperior.png"},
+					2: {ID: 2, Name: "Deluxe Room", Desc: "sample deluxe room description",
+						Price: 80.75, ImgPath: "../static/images/deluxeroom.png"},
+				},
+			},
+			dstLoc:         "/rooms?id=1",
 			expectedStatus: http.StatusSeeOther,
 		},
 	}
@@ -173,7 +213,12 @@ func TestPostCheckRoomAvail(t *testing.T) {
 				t.Logf("unexpected status code: expected %d, but got %d\n", c.expectedStatus, got.StatusCode)
 			}
 
-			t.Logf("redirect: %s", got.Header.Get("Location"))
+			if c.dstLoc != "" {
+				if c.dstLoc != got.Header.Get("Location") {
+					t.Fail()
+					t.Logf("expected loc: %s, but got %s\n", c.dstLoc, got.Header.Get("Location"))
+				}
+			}
 
 		})
 	}
