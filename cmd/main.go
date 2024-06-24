@@ -18,6 +18,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/users"
 )
 
 const port = ":8080"
@@ -30,6 +31,8 @@ var (
 
 	db   *sqlx.DB
 	dots map[string]*dotsql.DotSql
+
+	myHandler http.Handler
 )
 
 func main() {
@@ -38,7 +41,7 @@ func main() {
 	// http.HandleFunc("/about", h.About)
 
 	ap.Logger.Info("starting application", "port", port)
-	http.ListenAndServe(port, sm.LoadAndSave(routes.Routes(h, ap)))
+	http.ListenAndServe(port, myHandler)
 }
 
 func init() {
@@ -68,8 +71,9 @@ func init() {
 	// services
 	rs := reservations.New(reservations.NewPostgresReservation(db, dots["reservation"]))
 	rms := rooms.New(rooms.NewPostgresRoom(db, dots["room"]))
+	us := users.New(users.NewPostgresUser(db, dots["user"]))
 
-	h = handlers.New(r, sm, ap, rs, rms)
+	h = handlers.New(r, sm, ap, rs, rms, us)
 
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
@@ -79,4 +83,6 @@ func init() {
 
 	// register Room model
 	gob.Register(map[int]models.Room{})
+
+	myHandler = sm.LoadAndSave(routes.Routes(h, ap, sm))
 }
