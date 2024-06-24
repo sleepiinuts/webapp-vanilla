@@ -249,7 +249,7 @@ func init() {
 	rs := reservations.New(&reservations.MockReservation{})
 	rms := rooms.New(&rooms.MockRoom{})
 
-	h = New(r, sm, ap, rs, rms)
+	h = New(r, sm, ap, rs, rms, nil)
 
 	// routes.Routes(h,ap)
 	mux := chi.NewRouter()
