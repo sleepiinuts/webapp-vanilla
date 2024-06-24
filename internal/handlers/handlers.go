@@ -14,6 +14,8 @@ import (
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
 	rms "github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/users"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/exp/maps"
 )
 
@@ -23,10 +25,11 @@ type Handler struct {
 	ap  *configs.AppProperties
 	rs  *reservations.ReservationServ
 	rms *rms.RoomServ
+	us  *users.UserServ
 }
 
-func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties, rs *reservations.ReservationServ, rms *rms.RoomServ) *Handler {
-	return &Handler{r: r, sm: sm, ap: ap, rs: rs, rms: rms}
+func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties, rs *reservations.ReservationServ, rms *rms.RoomServ, us *users.UserServ) *Handler {
+	return &Handler{r: r, sm: sm, ap: ap, rs: rs, rms: rms, us: us}
 }
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
@@ -107,6 +110,8 @@ func (h *Handler) PostMakeReservation(w http.ResponseWriter, r *http.Request) {
 	// parse session-message to template data
 	if !form.IsValid() {
 		w.WriteHeader(http.StatusForbidden)
+
+		// TODO: user redirect instead ??
 		h.r.RenderTemplateFromMap(w, r, "make-reservation.tmpl",
 			&models.Template{
 				Form: r.PostForm, FormErrors: form.GetErrors(),
@@ -246,4 +251,68 @@ func (h *Handler) ReservationSumm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.r.RenderTemplateFromMap(w, r, "reservation-summary.tmpl", td)
+}
+
+func (h *Handler) AdminDashBoard(w http.ResponseWriter, r *http.Request) {
+	h.r.RenderTemplateFromMap(w, r, "admin-dashboard.tmpl", &models.Template{})
+}
+
+func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
+	h.r.RenderTemplateFromMap(w, r, "login.tmpl", &models.Template{})
+}
+
+func (h *Handler) PostLogin(w http.ResponseWriter, r *http.Request) {
+	// parse form
+	err := r.ParseForm()
+	if err != nil {
+		h.ap.Logger.Error("[postLogin] invalid Form", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// check required fields
+	form := forms.New(r.PostForm)
+	form.Require("email", "password")
+	if !form.IsValid() {
+		w.WriteHeader(http.StatusForbidden)
+		h.ap.Logger.Error("[postLogin] invalid Form", "err", "missing required field(s)")
+		// TODO: make redirect
+		return
+	}
+
+	// bcrypt pwd
+	email := form.GetField("email")
+	pwd := []byte(form.GetField("password"))
+
+	// bpwd, err := bcrypt.GenerateFromPassword([]byte(pwd), configs.DefaultBcryptCost)
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	h.ap.Logger.Error("[postLogin] hashing pwd", "error", err)
+	// 	// TODO: make redirect
+	// 	return
+	// }
+
+	// check if exist,user(email) && corresponding pwd
+	id, dbPwd, err := h.us.Authen(email)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		h.ap.Logger.Error("[postLogin] authen", "error", err)
+		// TODO: make redirect
+		return
+	}
+
+	if err = bcrypt.CompareHashAndPassword(dbPwd, pwd); err != nil {
+		h.ap.Logger.Error("[postLogin] invalid username/password", "error", err)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+		// TODO: notify login fail
+		return
+	}
+	// mitigate [OWASP] session fixation
+	h.sm.RenewToken(r.Context())
+
+	h.sm.Put(r.Context(), "userid", id)
+	h.ap.Logger.Info("login success")
+
+	http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
 }
