@@ -28,4 +28,12 @@ func prepSqlLoader() {
 
 		dots["reservation"] = dot
 	}
+
+	if dot, err := dotsql.LoadFromFile(basePath + "/users/user.sql"); true {
+		if err != nil {
+			log.Fatal("user sql loader error: ", err)
+		}
+
+		dots["user"] = dot
+	}
 }
