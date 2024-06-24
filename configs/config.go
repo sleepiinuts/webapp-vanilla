@@ -38,6 +38,7 @@ var DBConf = DBConfig{
 }
 
 var DateFormat = time.DateOnly
+var DefaultBcryptCost = 12
 
 func New(tc map[string]*template.Template, usecache bool, logger *slog.Logger) *AppProperties {
 	return &AppProperties{
