@@ -1,25 +1,23 @@
 package users
 
-import "fmt"
+import "github.com/sleepiinuts/webapp-plain/pkg/models"
 
 type UserServ struct {
 	repos UserRepos
 }
 
-func NewServ(repos UserRepos) *UserServ {
+func New(repos UserRepos) *UserServ {
 	return &UserServ{repos: repos}
 }
 
 func (us *UserServ) New(firstName, lastName, email, pwd, phone, role string) (int, error) {
-	row, err := us.repos.new(firstName, lastName, email, pwd, phone, role)
-	if err != nil {
-		return -1, fmt.Errorf("[user] new: %w", err)
-	}
+	return us.repos.new(firstName, lastName, email, pwd, phone, role)
+}
 
-	id := -1
-	if err := row.Scan(&id); err != nil {
-		return id, fmt.Errorf("[user] new - scan: %w", err)
-	}
+func (us *UserServ) Authen(email string) (string, []byte, error) {
+	return us.repos.authen(email)
+}
 
-	return id, nil
+func (us *UserServ) FindByEmail(email string) (*models.User, error) {
+	return us.repos.findByEmail(email)
 }
