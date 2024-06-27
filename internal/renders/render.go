@@ -22,10 +22,22 @@ import (
 
 var funcMap = template.FuncMap{
 	"isEmptyFlash": isEmptyFlash,
+	"isLoggedIn":   isLoggedIn,
 }
 
 func isEmptyFlash(f models.Flash) bool {
 	return f == models.Flash{}
+}
+
+func isLoggedIn(data map[string]any) bool {
+	if data == nil {
+		return false
+	}
+
+	if _, ok := data["isLoggedIn"]; !ok {
+		return false
+	}
+	return true
 }
 
 type Renderer struct {
@@ -95,6 +107,15 @@ func (r *Renderer) RenderTemplateFromMap(w http.ResponseWriter, rq *http.Request
 		} else {
 			td.Flash = flash
 		}
+	}
+
+	// TODO: get userid from session, if exist means already logged in
+	if r.sm.Get(rq.Context(), "userid") != nil {
+		if td.Data == nil {
+			td.Data = make(map[string]any)
+		}
+
+		td.Data["isLoggedIn"] = true
 	}
 
 	err := r.ap.Tc[tmpl].Execute(w, td)
