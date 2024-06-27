@@ -1,0 +1,71 @@
+.container.row {
+  height: 100vh;
+}
+
+.calendar .header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendar table.date {
+  width: 100%;
+}
+
+.calendar table.date tr {
+  text-align: right;
+  vertical-align: top;
+}
+
+.calendar table.date td {
+  height: 6rem;
+  width: calc(100% / 7);
+  border: 2px solid;
+  transition: all 0.5s ease-out 0s;
+}
+
+.booked-body {
+  height: 1rem;
+  width: 100%;
+  background-color: aqua;
+}
+.booked-head {
+  height: 1rem;
+  width: 50%;
+  margin-left: 50%;
+  background-color: aqua;
+}
+.booked-tail {
+  height: 1rem;
+  width: 50%;
+  background-color: aqua;
+}
+.booked-only {
+  height: 1rem;
+  width: 80%;
+  margin: 0 auto;
+  background-color: aqua;
+}
+
+#hover:hover {
+  box-shadow: 5px 10px 8px red;
+}
+
+.clickedd {
+  transition: all 0.5s ease-out 0s;
+  transform: scale(0.9);
+  background-color: #ebebeb;
+}
+
+.blocked {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    rgba(194, 0, 0, 0.3) 10px,
+    rgba(194, 0, 0, 0.3) 20px
+  );
+}
+
+.calendar .date-container .col {
+  border: 2px solid black;
+}
