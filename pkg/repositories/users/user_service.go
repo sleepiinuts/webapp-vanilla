@@ -15,6 +15,7 @@ func (us *UserServ) New(firstName, lastName, email, pwd, phone, role string) (in
 }
 
 func (us *UserServ) Authen(email string) (string, []byte, error) {
+	// return id,password,role[tbc]
 	return us.repos.authen(email)
 }
 
