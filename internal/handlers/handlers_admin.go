@@ -40,7 +40,7 @@ func newCalendar(roomID int, sd, td time.Time, rs *reservations.ReservationServ)
 		sd = startDt.AddDate(0, 0, -int(startDt.Weekday()))
 	}
 
-	resvs, err := rs.FindByIdAndArrAndDep(roomID, sd, td)
+	resvs, err := rs.FindByIdAndArrAndDep(roomID, sd, sd.Add(42*24*time.Hour))
 	if err != nil {
 		return nil, fmt.Errorf("newCalendar: %w", err)
 	}
@@ -62,6 +62,7 @@ func (c *calendar) generate(resvs map[time.Time]*models.Reservation) {
 		activities = append(activities, make([]*activity, 7))
 		for j := 0; j < 7; j++ {
 			activity := activity{}
+			activity.date = d
 
 			if resv, ok := resvs[d]; ok {
 				resvCSS := ""
@@ -83,7 +84,6 @@ func (c *calendar) generate(resvs map[time.Time]*models.Reservation) {
 					// should not exist as the service generates only map of reservation within arr & dep dates
 				}
 
-				activity.date = d
 				activity.resvID = resv.ID
 				activity.resvCSS = resvCSS
 			}
@@ -95,6 +95,19 @@ func (c *calendar) generate(resvs map[time.Time]*models.Reservation) {
 
 	// set activities to calendar
 	c.activities = activities
+}
+
+func (a *activity) String() string {
+	return fmt.Sprintf("{date:%s,resvID:%d,resvCSS:%s}",
+		a.date.Format(configs.DateFormat), a.resvID, a.resvCSS)
+}
+
+func (a *activity) GetDate() string {
+	return fmt.Sprintf("%02d", a.date.Day())
+}
+
+func (a *activity) GetResvCSS() string {
+	return a.resvCSS
 }
 
 // func (c *calendar) String() string {
