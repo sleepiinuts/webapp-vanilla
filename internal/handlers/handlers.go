@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/sleepiinuts/webapp-plain/configs"
@@ -253,10 +254,6 @@ func (h *Handler) ReservationSumm(w http.ResponseWriter, r *http.Request) {
 	h.r.RenderTemplateFromMap(w, r, "reservation-summary.tmpl", td)
 }
 
-func (h *Handler) AdminDashBoard(w http.ResponseWriter, r *http.Request) {
-	h.r.RenderTemplateFromMap(w, r, "admin-dashboard.tmpl", &models.Template{})
-}
-
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	h.r.RenderTemplateFromMap(w, r, "login.tmpl", &models.Template{})
 }
@@ -314,5 +311,9 @@ func (h *Handler) PostLogin(w http.ResponseWriter, r *http.Request) {
 	h.sm.Put(r.Context(), "userid", id)
 	h.ap.Logger.Info("login success")
 
-	http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
+	// set default roomID & current month&year
+	today := time.Now()
+	route := fmt.Sprintf("/admin/dashboard?rid=1&y=%d&m=%02d", today.Year(), today.Month())
+
+	http.Redirect(w, r, route, http.StatusSeeOther)
 }
