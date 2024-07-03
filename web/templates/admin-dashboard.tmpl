@@ -36,6 +36,24 @@
               <th>Fri</th>
               <th>Sat</th>
             </tr>
+            {{$actss := index .Data "activities"}}
+            {{range $id,$acts := $actss}}
+            <tr>
+              {{range $id2,$act := $acts}}
+              <td>
+                {{ $act.GetDate }}
+                {{if $act.GetResvCSS}}
+                <div class="{{ $act.GetResvCSS }}"></div>
+                {{ end }}
+              </td>
+              {{
+                end
+              }}
+            </tr>
+            {{
+              end
+            }}
+            <hr />
             <tr>
               <td>26</td>
               <td>27</td>
