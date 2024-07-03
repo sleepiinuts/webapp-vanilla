@@ -20,8 +20,38 @@ type PostgresReservation struct {
 	dot *dotsql.DotSql
 }
 
-func NewPostgresReservation(db *sqlx.DB, dot *dotsql.DotSql) *PostgresReservation {
-	return &PostgresReservation{db: db, dot: dot}
+// findByIdAndArrAndDep implements ReservationRepos.
+func (p *PostgresReservation) findByIdAndArrAndDep(id int, arr time.Time, dep time.Time) (map[time.Time]*models.Reservation, error) {
+	name := "findByIdAndArrAndDep"
+	stmt, err := p.dot.Raw(name)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w: %w", name, ErrStmtNotFound, err)
+	}
+
+	resvs := make(map[time.Time]*models.Reservation)
+	rows, err := p.db.Queryx(stmt, id, arr, dep)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w: %w", name, ErrStmtExec, err)
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var resv models.Reservation
+		err := rows.StructScan(&resv)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w: %w", name, ErrStructScan, err)
+		}
+
+		arr := resv.Arrival
+		dep := resv.Departure
+
+		for d := arr; d.Before(dep) || d.Equal(dep); d = d.Add(24 * time.Hour) {
+			// it's guaranteed by the application that no overlapping booking is allowed
+			resvs[d] = &resv
+		}
+	}
+
+	return resvs, nil
 }
 
 // findByArrivalAndDeparture implements ReservationRepos.
@@ -50,6 +80,10 @@ func (p *PostgresReservation) findByArrivalAndDeparture(arr time.Time, dep time.
 	}
 
 	return resvs, nil
+}
+
+func NewPostgresReservation(db *sqlx.DB, dot *dotsql.DotSql) *PostgresReservation {
+	return &PostgresReservation{db: db, dot: dot}
 }
 
 var _ ReservationRepos = &PostgresReservation{}

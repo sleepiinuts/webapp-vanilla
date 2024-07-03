@@ -28,6 +28,14 @@ func New(repo ReservationRepos) *ReservationServ {
 	return &ReservationServ{repo: repo}
 }
 
+func (rs *ReservationServ) FindByArrivalAndDeparture(arr, dep time.Time) (map[int][]*models.Reservation, error) {
+	return rs.repo.findByArrivalAndDeparture(arr, dep)
+}
+
+func (rs *ReservationServ) FindByIdAndArrAndDep(id int, arr, dep time.Time) (map[time.Time]*models.Reservation, error) {
+	return rs.repo.findByIdAndArrAndDep(id, arr, dep)
+}
+
 func (rs *ReservationServ) ListAvailRooms(inqRooms []int, arr, dep time.Time) (map[int][]*Period, error) {
 
 	bookedRooms, err := rs.repo.findByArrivalAndDeparture(arr, dep)

@@ -8,9 +8,14 @@ import (
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 )
 
+var ErrNotFound = errors.New("info not found")
+
 type MockReservation struct{}
 
-var ErrNotFound = errors.New("info not found")
+// findByIdAndArrAndDep implements ReservationRepos.
+func (m *MockReservation) findByIdAndArrAndDep(id int, arr time.Time, dep time.Time) (map[time.Time]*models.Reservation, error) {
+	panic("unimplemented")
+}
 
 // findByArrivalAndDeparture implements ReservationRepos.
 func (m *MockReservation) findByArrivalAndDeparture(arr time.Time, dep time.Time) (map[int][]*models.Reservation, error) {
