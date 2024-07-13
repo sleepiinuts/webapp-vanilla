@@ -9,6 +9,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/configs"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/restrictions"
 )
 
 type calendar struct {
@@ -21,12 +22,13 @@ type calendar struct {
 type activity struct {
 	date    time.Time
 	resvID  int
+	restID  int
 	resvCSS string
 }
 
 var Header = []string{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}
 
-func newCalendar(roomID int, sd, td time.Time, rs *reservations.ReservationServ) (*calendar, error) {
+func newCalendar(roomID int, sd, td time.Time, rs *reservations.ReservationServ, rtn *restrictions.RestrictionServ) (*calendar, error) {
 	if sd.IsZero() {
 
 		tStr := td.Format(time.DateOnly)
@@ -40,18 +42,25 @@ func newCalendar(roomID int, sd, td time.Time, rs *reservations.ReservationServ)
 		sd = startDt.AddDate(0, 0, -int(startDt.Weekday()))
 	}
 
-	resvs, err := rs.FindByIdAndArrAndDep(roomID, sd, sd.Add(42*24*time.Hour))
+	ed := sd.Add(42 * 24 * time.Hour)
+
+	resvs, err := rs.FindByIdAndArrAndDep(roomID, sd, ed)
+	if err != nil {
+		return nil, fmt.Errorf("newCalendar: %w", err)
+	}
+
+	rests, err := rtn.FindByIdAndEffAndExp(roomID, sd, ed)
 	if err != nil {
 		return nil, fmt.Errorf("newCalendar: %w", err)
 	}
 
 	c := &calendar{roomID: roomID, startDt: sd, today: td}
-	c.generate(resvs)
+	c.generate(resvs, rests)
 
 	return c, nil
 }
 
-func (c *calendar) generate(resvs map[time.Time]*models.Reservation) {
+func (c *calendar) generate(resvs map[time.Time]*models.Reservation, rests map[time.Time]*models.Restriction) {
 	// return 6x7 calendar dates
 	// NewCalendar guarantees startDt value exists
 
@@ -88,6 +97,10 @@ func (c *calendar) generate(resvs map[time.Time]*models.Reservation) {
 				activity.resvCSS = resvCSS
 			}
 
+			if rest, ok := rests[d]; ok {
+				activity.restID = rest.ID
+			}
+
 			activities[i][j] = &activity
 			d = d.AddDate(0, 0, 1)
 		}
@@ -108,6 +121,10 @@ func (a *activity) GetDate() string {
 
 func (a *activity) GetResvCSS() string {
 	return a.resvCSS
+}
+
+func (a *activity) GetRestID() int {
+	return a.restID
 }
 
 // func (c *calendar) String() string {
@@ -157,10 +174,14 @@ func (h *Handler) AdminDashBoard(w http.ResponseWriter, r *http.Request) {
 		h.ap.Logger.Error("adminDashBoard: startDt calculation", "error", err)
 		return
 	}
+
+	// get Calendar Header
+	calendarHead := fmt.Sprintf("%s %d BE", sd.Month().String(), sd.Year())
+
 	// calculate first calendar date
 	sd = sd.AddDate(0, 0, -int(sd.Weekday()))
 
-	c, err := newCalendar(rid, sd, time.Now(), h.rs)
+	c, err := newCalendar(rid, sd, time.Now(), h.rs, h.rtn)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusBadRequest)
 		h.ap.Logger.Error("adminDashBoard: newCalendar", "error", err)
@@ -168,6 +189,10 @@ func (h *Handler) AdminDashBoard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.r.RenderTemplateFromMap(w, r, "admin-dashboard.tmpl", &models.Template{
-		Data: map[string]any{"activities": c.activities},
+		Data: map[string]any{
+			"roomId":       rid,
+			"calendarHead": calendarHead,
+			"activities":   c.activities,
+		},
 	})
 }

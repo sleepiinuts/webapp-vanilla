@@ -14,6 +14,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/internal/renders"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/restrictions"
 	rms "github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/users"
 	"golang.org/x/crypto/bcrypt"
@@ -27,10 +28,11 @@ type Handler struct {
 	rs  *reservations.ReservationServ
 	rms *rms.RoomServ
 	us  *users.UserServ
+	rtn *restrictions.RestrictionServ
 }
 
-func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties, rs *reservations.ReservationServ, rms *rms.RoomServ, us *users.UserServ) *Handler {
-	return &Handler{r: r, sm: sm, ap: ap, rs: rs, rms: rms, us: us}
+func New(r *renders.Renderer, sm *scs.SessionManager, ap *configs.AppProperties, rs *reservations.ReservationServ, rms *rms.RoomServ, us *users.UserServ, rtn *restrictions.RestrictionServ) *Handler {
+	return &Handler{r: r, sm: sm, ap: ap, rs: rs, rms: rms, us: us, rtn: rtn}
 }
 
 func (h *Handler) Home(w http.ResponseWriter, r *http.Request) {
