@@ -36,4 +36,12 @@ func prepSqlLoader() {
 
 		dots["user"] = dot
 	}
+
+	if dot, err := dotsql.LoadFromFile(basePath + "/restrictions/restriction.sql"); true {
+		if err != nil {
+			log.Fatal("restriction sql loader error: ", err)
+		}
+
+		dots["rtn"] = dot
+	}
 }
