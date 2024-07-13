@@ -17,6 +17,7 @@ import (
 	"github.com/sleepiinuts/webapp-plain/internal/routes"
 	"github.com/sleepiinuts/webapp-plain/pkg/models"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/reservations"
+	"github.com/sleepiinuts/webapp-plain/pkg/repositories/restrictions"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/rooms"
 	"github.com/sleepiinuts/webapp-plain/pkg/repositories/users"
 )
@@ -72,8 +73,9 @@ func init() {
 	rs := reservations.New(reservations.NewPostgresReservation(db, dots["reservation"]))
 	rms := rooms.New(rooms.NewPostgresRoom(db, dots["room"]))
 	us := users.New(users.NewPostgresUser(db, dots["user"]))
+	rtn := restrictions.New(restrictions.NewPostgresRestriction(db, dots["rtn"]))
 
-	h = handlers.New(r, sm, ap, rs, rms, us)
+	h = handlers.New(r, sm, ap, rs, rms, us, rtn)
 
 	// register Flash model for encoding required in scs session
 	gob.Register(models.Flash{})
