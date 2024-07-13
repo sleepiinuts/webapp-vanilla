@@ -16,14 +16,33 @@
     <div class="container row g-0">
       <div class="col-2 left-menu">left</div>
       <div class="col-10">
-        Room: Grand Superior
+        <div class="tab-container">
+          {{if index .Data "roomId"}}
+          {{$rid := index .Data "roomId"}}
+          <span
+            class="tab {{if eq $rid 1}}active{{ end }}"
+            onclick="tabClick(this)"
+            id="1"
+            >Grand Superior</span
+          ><span
+            class="tab {{if eq $rid 2}}active{{ end }}"
+            onclick="tabClick(this)"
+            id="2"
+            >Deluxe Room</span
+          >
+          {{ end }}
+        </div>
         <div class="calendar">
           <div class="header">
-            <div class="month-year"><h2>June 2024 BE</h2></div>
+            {{if index .Data "calendarHead"}}
+            <div class="month-year">
+              <h2>{{index .Data "calendarHead"}}</h2>
+            </div>
+            {{ end }}
             <div class="navigation">
-              <button>&#x276E;</button>
-              <button>Today</button>
-              <button>&#x276F;</button>
+              <button onclick="prevMonth()">&#x276E;</button>
+              <button onclick="currMonth()">Today</button>
+              <button onclick="nextMonth()">&#x276F;</button>
             </div>
           </div>
           <table class="date">
@@ -40,7 +59,14 @@
             {{range $id,$acts := $actss}}
             <tr>
               {{range $id2,$act := $acts}}
-              <td>
+              <td
+                {{if
+                ne
+                $act.GetRestID
+                0}}class="blocked"
+                {{end}}
+                onclick="clickk(this)"
+              >
                 {{ $act.GetDate }}
                 {{if $act.GetResvCSS}}
                 <div class="{{ $act.GetResvCSS }}"></div>
@@ -53,76 +79,6 @@
             {{
               end
             }}
-            <hr />
-            <tr>
-              <td>26</td>
-              <td>27</td>
-              <td>28</td>
-              <td>29</td>
-              <td>30</td>
-              <td>31</td>
-              <td>01</td>
-            </tr>
-            <tr>
-              <td>02</td>
-              <td>03</td>
-              <td>04</td>
-              <td>05</td>
-              <td>06</td>
-              <td>07</td>
-              <td>08</td>
-            </tr>
-            <tr>
-              <td>09</td>
-              <td>10</td>
-              <td>11</td>
-              <td>12</td>
-              <td>13</td>
-              <td>14</td>
-              <td>15</td>
-            </tr>
-            <tr>
-              <td>16</td>
-              <td>17</td>
-              <td>18</td>
-              <td>19</td>
-              <td class="blocked">20</td>
-              <td id="hover">21</td>
-              <td>22</td>
-            </tr>
-            <tr>
-              <td>23</td>
-              <td>24</td>
-              <td>
-                25
-                <div class="booked-only"></div>
-              </td>
-              <td>
-                26
-                <div class="booked-only"></div>
-              </td>
-              <td>27</td>
-              <td>28</td>
-              <td>29</td>
-            </tr>
-            <tr>
-              <td>
-                30
-                <div class="booked-head"></div>
-              </td>
-              <td>
-                31
-                <div class="booked-body"></div>
-              </td>
-              <td>
-                02
-                <div class="booked-tail"></div>
-              </td>
-              <td>03</td>
-              <td>04</td>
-              <td>05</td>
-              <td>06</td>
-            </tr>
           </table>
         </div>
       </div>

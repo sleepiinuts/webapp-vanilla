@@ -46,7 +46,7 @@
   background-color: aqua;
 }
 
-#hover:hover {
+.date tr td:hover {
   box-shadow: 5px 10px 8px red;
 }
 
@@ -68,4 +68,24 @@
 
 .calendar .date-container .col {
   border: 2px solid black;
+}
+
+.tab-container {
+  background-color: #dde1e4;
+}
+
+.tab {
+  background-color: #dde1e4;
+  display: inline-flex;
+  width: 6rem;
+  height: 3rem;
+}
+
+.tab.active {
+  background-color: #828a95;
+}
+
+.tab:hover {
+  background-color: #c9c9c9;
+  cursor: pointer;
 }
